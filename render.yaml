@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-video-production-studio-v2
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /app/data

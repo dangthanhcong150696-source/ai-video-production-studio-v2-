@@ -1,0 +1,42 @@
+{
+  "testedAt": "2026-11-17T14:58:22.729568+00:00",
+  "build": "passed",
+  "buildCommand": "docker build --secret id=build_ca,src=/etc/ssl/certs/ca-certificates.crt -t studio-v2:render-fix .",
+  "tlsVerification": "enabled; environment CA supplied through an ephemeral BuildKit secret, not stored in final image",
+  "runtime": {
+    "user": "node (uid=1000)",
+    "PORT": 10000,
+    "DATA_DIR": "/app/data"
+  },
+  "api": {
+    "health": 200,
+    "ui": 200,
+    "upload": 201,
+    "scenes": 3,
+    "export": "done",
+    "download": 200,
+    "duration": 17
+  },
+  "mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio"
+      }
+    ],
+    "format": {
+      "duration": "17.000000"
+    }
+  },
+  "fullDecode": "passed (ffmpeg -v error -i output.mp4 -f null -)",
+  "renderDeployment": "not verified; no Render account or service URL available in this task",
+  "applicationSource": "unchanged from 85d4a3c"
+}

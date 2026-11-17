@@ -42,3 +42,20 @@ Bằng chứng tái tạo mỗi lần chạy: `evidence/validation.json`, `evide
 - Job xuất lưu trong bộ nhớ: sau khi restart backend, file dự án vẫn còn nhưng cần xuất lại để bật tải xuống.
 - Chưa kiểm thử video HDR, VFR phức tạp, file hỏng có chủ đích hoặc video 30 phút/1 GB. Tiếng được giữ nội dung và mốc thời gian nhưng có mã hóa lại AAC, không bit-exact.
 - Dành cho máy phát triển đáng tin cậy. Chưa có đăng nhập, phân quyền hoặc hạn chế tốc độ; không triển khai API trực tiếp ra Internet. File upload được lưu trên máy chủ, không gửi tới nhà cung cấp AI.
+
+## Render / Docker
+
+`Dockerfile`, `.dockerignore` và `render.yaml` nằm tại thư mục gốc. Trên Render chọn repository này, nhánh `main`, Root Directory để trống, Dockerfile Path `./Dockerfile`, runtime Docker và gói Free. Backend tự đọc `PORT` do Render cấp và lắng nghe `0.0.0.0`; không dùng Vite dev server trong production. Health check: `/api/health`.
+
+```sh
+docker build -t studio-v2 .
+docker run --rm -p 3001:10000 -e PORT=10000 studio-v2
+```
+
+Container có FFmpeg/FFprobe, giao diện build sẵn và chạy bằng user `node`. Dữ liệu `.data` của máy phát triển bị loại khỏi build context. Gói Free dùng filesystem tạm thời; video có thể mất khi restart/redeploy. Không yêu cầu API key hoặc dịch vụ AI trả phí. Chỉ chọn Free khi dashboard xác nhận giá $0.
+
+Nếu build trong môi trường có proxy HTTPS riêng, có thể cấp CA tin cậy bằng BuildKit secret (không commit chứng chỉ, không tắt TLS): `docker build --secret id=build_ca,src=/etc/ssl/certs/ca-certificates.crt -t studio-v2 .`. Render thông thường không cần secret này.
+
+Kiểm tra container ở cổng riêng: `docker run --rm -d --name studio-render-smoke -p 127.0.0.1:3012:10000 -e PORT=10000 studio-v2`, sau đó chạy `node tests/docker-smoke.mjs`. Script kiểm tra health, UI, upload MP4, chia cảnh, xuất và tải file vào `/tmp/studio-container-output.mp4`. Dừng container bằng `docker stop studio-render-smoke`.
+
+Trong container dùng `DATA_DIR=/app/data` (đã khai báo trong Dockerfile và render.yaml), tránh thư mục ẩn bị middleware tải file bỏ qua. Nếu service Render cũ đã có biến `DATA_DIR`, đặt lại thành `/app/data` hoặc xóa để dùng mặc định của image.
