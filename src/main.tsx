@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 import Timeline from "./Timeline";
+import Storyboard from "./Storyboard";
 type Scene = {
   id: number;
   start: number;
@@ -40,11 +41,11 @@ function App() {
       .catch(() => {});
   }, []);
   useEffect(() => {
-    const id = localStorage.getItem("studio-v3-project");
+    const id = localStorage.getItem("studio-v3-1-project");
     if (id)
       api(`/projects/${id}`)
         .then(setProject)
-        .catch(() => localStorage.removeItem("studio-v3-project"));
+        .catch(() => localStorage.removeItem("studio-v3-1-project"));
   }, []);
   useEffect(() => {
     if (!project) return;
@@ -84,7 +85,7 @@ function App() {
         { method: "POST", body },
       );
       setProject(p);
-      localStorage.setItem("studio-v3-project", p.id);
+      localStorage.setItem("studio-v3-1-project", p.id);
       setJob({ status: "idle", progress: 0 });
       if (scene === undefined) setSelected(0);
     } catch (e) {
@@ -128,7 +129,7 @@ function App() {
           <div>
             <span className="eyebrow">AI VIDEO PRODUCTION</span>
             <h1>
-              Studio <em>V3</em>
+              Studio <em>V3.1</em>
             </h1>
           </div>
           <div className="top-right">
@@ -284,6 +285,18 @@ function App() {
           </div>
         </section>
         {project && (
+          <Storyboard
+            project={project}
+            locked={locked || timelineDirty}
+            onError={setError}
+            onBusy={setBusy}
+            onUpdate={async () => {
+              setProject(await api(`/projects/${project.id}`));
+              setJob({ status: "idle", progress: 0 });
+            }}
+          />
+        )}
+        {project && (
           <Timeline
             project={project}
             locked={locked}
@@ -372,7 +385,7 @@ function App() {
               try {
                 await api(`/projects/${project.id}`, { method: "DELETE" });
                 setProject(null);
-                localStorage.removeItem("studio-v3-project");
+                localStorage.removeItem("studio-v3-1-project");
               } catch (e) {
                 setError((e as Error).message);
               }
@@ -383,7 +396,7 @@ function App() {
         )}
         <footer>
           LOCAL PROCESSING · NO PAID API{" "}
-          <span>AI VIDEO PRODUCTION STUDIO V3</span>
+          <span>AI VIDEO PRODUCTION STUDIO V3.1</span>
         </footer>
       </main>
     </div>

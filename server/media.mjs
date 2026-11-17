@@ -43,7 +43,9 @@ export async function probe(file) {
   );
   const info = JSON.parse(out),
     video = info.streams.find((s) => s.codec_type === "video");
-  const duration = Number(info.format.duration);
+  // Audio/container padding must not create a scene after the final video frame.
+  const videoDuration = Number(video?.duration);
+  const duration = Number.isFinite(videoDuration)&&videoDuration>0 ? videoDuration : Number(info.format.duration);
   if (!video || !video.width || !video.height)
     throw failure("Không tìm thấy hình ảnh hợp lệ");
   return {

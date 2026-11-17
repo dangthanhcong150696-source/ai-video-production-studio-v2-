@@ -14,6 +14,12 @@ import {
 import { resolve, join, extname } from "node:path";
 import { validateMedia, detect, render, editTimeline } from "./media.mjs";
 import { providers, generateMedia, importMedia } from "./providers.mjs";
+import {
+  ensureStoryboard,
+  editPrompts,
+  assetUsed,
+  pruneReferences,
+} from "./storyboard.mjs";
 import { limits, failure } from "./limits.mjs";
 const app = express(),
   root = resolve(process.env.DATA_DIR || "data-v3");
@@ -162,8 +168,10 @@ async function attach(p, s, file, meta) {
   await rename(file, join(dir(p.id), name));
   const old = s.replacement;
   Object.assign(s, { replacement: name, ...meta });
+  if (s.storyboard) s.storyboard.needsReview = true;
   await invalidate(p);
-  if (old) await unlink(join(dir(p.id), old)).catch(() => {});
+  if (old && !assetUsed(p, old))
+    await unlink(join(dir(p.id), old)).catch(() => {});
 }
 app.get("/api/health", (req, res) => res.json({ ok: true, version: 3 }));
 app.get("/api/config", (req, res) =>
@@ -196,6 +204,7 @@ app.post(
           ...info,
           scenes,
         };
+        await ensureStoryboard(p, dir(id));
         await save(p);
         return { status: 201, body: p };
       } catch (e) {
@@ -234,10 +243,17 @@ app.patch(
       throw failure("Timeline tối đa 120 giây");
     const removed = p.scenes.filter((s) => !scenes.some((x) => x.id === s.id));
     p.scenes = scenes;
+    await ensureStoryboard(p, dir(p.id));
     await invalidate(p);
+    await pruneReferences(p, dir(p.id));
     for (const s of removed)
-      if (s.replacement)
-        await unlink(join(dir(p.id), s.replacement)).catch(() => {});
+      for (const name of [
+        s.replacement,
+        s.storyboard?.image?.file,
+        s.storyboard?.video?.file,
+      ].filter(Boolean))
+        if (!assetUsed(p, name))
+          await unlink(join(dir(p.id), name)).catch(() => {});
     return { body: p };
   }),
 );
@@ -259,12 +275,10 @@ app.post(
       const info = await validateMedia(req.file.path);
       const origin =
         req.body.origin === "google-flow" ? "google-flow" : "manual";
-      await attach(
-        p,
-        s,
-        req.file.path,
-        {...importMedia({ kind: info.kind, origin }),extension:info.extension},
-      );
+      await attach(p, s, req.file.path, {
+        ...importMedia({ kind: info.kind, origin }),
+        extension: info.extension,
+      });
       return { body: p };
     },
     { uploadFile: true },
@@ -301,6 +315,118 @@ app.get("/api/projects/:id/scenes/:scene/preview", async (req, res, next) => {
     next(e);
   }
 });
+
+app.post(
+  "/api/projects/:id/storyboard",
+  transaction(async (req) => {
+    const p = await load(req.params.id);
+    await ensureStoryboard(p, dir(p.id));
+    await save(p);
+    await pruneReferences(p, dir(p.id));
+    return { body: p };
+  }),
+);
+app.patch(
+  "/api/projects/:id/storyboard/:scene/prompts",
+  transaction(async (req) => {
+    const p = await load(req.params.id),
+      s = sceneOf(p, req.params.scene);
+    if (!s.storyboard) throw failure("Khởi tạo Storyboard trước");
+    editPrompts(s, req.body);
+    await save(p);
+    return { body: p };
+  }),
+);
+app.get(
+  "/api/projects/:id/storyboard/:scene/references/:edge",
+  async (req, res, next) => {
+    try {
+      const p = await load(req.params.id),
+        s = sceneOf(p, req.params.scene);
+      if (!["start", "end"].includes(req.params.edge) || !s.storyboard?.refs)
+        throw failure("Không tìm thấy ảnh tham chiếu", 404);
+      res.sendFile(join(dir(p.id), s.storyboard.refs[req.params.edge]), {
+        dotfiles: "allow",
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+app.get(
+  "/api/projects/:id/storyboard/:scene/media/:kind",
+  async (req, res, next) => {
+    try {
+      const p = await load(req.params.id),
+        s = sceneOf(p, req.params.scene);
+      if (
+        !["image", "video"].includes(req.params.kind) ||
+        !s.storyboard?.[req.params.kind]
+      )
+        throw failure("Không có media Storyboard", 404);
+      res.sendFile(join(dir(p.id), s.storyboard[req.params.kind].file), {
+        dotfiles: "allow",
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+app.post(
+  "/api/projects/:id/storyboard/:scene/import/:kind",
+  transaction(
+    async (req) => {
+      const p = await load(req.params.id),
+        s = sceneOf(p, req.params.scene),
+        kind = req.params.kind;
+      if (!req.file) throw failure("Chưa chọn media");
+      if (!["image", "video"].includes(kind))
+        throw failure("Loại media không hợp lệ");
+      const info = await validateMedia(req.file.path);
+      if (info.kind !== kind)
+        throw failure("Loại file không khớp ô nhập ảnh/video");
+      if (!s.storyboard) throw failure("Khởi tạo Storyboard trước");
+      const provider =
+        kind === "image"
+          ? "Nano Banana Pro"
+          : req.body.provider === "Omni Plus"
+            ? "Omni Plus"
+            : "Omni Flash";
+      const name = `story-${randomUUID()}${info.extension}`,
+        old = s.storyboard[kind]?.file,
+        previous = s.replacement;
+      await rename(req.file.path, join(dir(p.id), name));
+      s.storyboard[kind] = {
+        file: name,
+        provider,
+        originalName: req.file.originalname.slice(0, 200),
+        importedAt: Date.now(),
+        source: "manual-google-flow",
+        duration: Number.isFinite(info.duration) ? info.duration : null,
+        width: info.width,
+        height: info.height,
+      };
+      s.storyboard.needsReview =
+        kind === "video"
+          ? false
+          : !!(s.storyboard.video && s.storyboard.needsReview);
+      if (kind === "video" || !s.storyboard.video)
+        Object.assign(s, {
+          replacement: name,
+          kind,
+          origin: "google-flow",
+          mode: "LIVE",
+          networkCalls: 0,
+        });
+      await invalidate(p);
+      for (const file of [old, previous].filter(Boolean))
+        if (!assetUsed(p, file))
+          await unlink(join(dir(p.id), file)).catch(() => {});
+      return { body: p };
+    },
+    { uploadFile: true },
+  ),
+);
 app.post(
   "/api/projects/:id/export",
   transaction(async (req, res) => {

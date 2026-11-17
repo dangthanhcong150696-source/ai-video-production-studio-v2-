@@ -1,0 +1,70 @@
+{
+  "testedAt": "2026-11-17T15:49:57.675Z",
+  "source": {
+    "duration": 9,
+    "media": "local moving test pattern and 440 Hz audio"
+  },
+  "sourceSplitSeconds": [
+    8,
+    1
+  ],
+  "referenceHashes": [
+    [
+      "7f6f51e29da090d1e751dd72f61c27dd632ef38d54dc0326a6fe38110e060173",
+      "aa083f048e58a234663124c00edb165e8bd35becd42d8eb572f0f5c73057b444"
+    ],
+    [
+      "2d1d815d27cc9631bee8197fcfaa1c76271ec01e34d19644ac104f7adcd68231",
+      "39b87e5b43c7c74d70a79263dd1caf4c9d124fd0ca0fb5ccc8a8385819075a7e"
+    ]
+  ],
+  "output": {
+    "duration": 4,
+    "width": 320,
+    "height": 180,
+    "audio": true,
+    "fps": 30
+  },
+  "finalOrder": [
+    {
+      "id": 1,
+      "start": 8,
+      "duration": 1,
+      "kind": "image",
+      "provider": "Nano Banana Pro"
+    },
+    {
+      "id": 0,
+      "start": 1,
+      "duration": 3,
+      "kind": "video",
+      "provider": "Omni Flash"
+    }
+  ],
+  "pixels": [
+    [
+      0,
+      127,
+      0
+    ],
+    [
+      255,
+      255,
+      0
+    ]
+  ],
+  "checks": [
+    "automatic first/last JPEG references differ",
+    "image and motion prompts edited and persisted",
+    "separate Nano image retained after Omni video import",
+    "import routed to stable scene ID after reorder",
+    "trim refreshed references and flagged old media for review",
+    "wrong media kind rejected",
+    "LIVE generation blocked 501",
+    "48fps portrait 1s clip looped and normalized to 30fps landscape 3s",
+    "4 second H264/AAC MP4 downloaded and fully decoded",
+    "green image and yellow imported clip pixels verified"
+  ],
+  "externalGeneration": "NOT RUN; media fixtures generated locally, not by Google Flow",
+  "paidCreditsUsed": 0
+}

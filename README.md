@@ -1,6 +1,32 @@
-# AI Video Production Studio V3
+# AI Video Production Studio V3.1
 
-Nhánh `feature/studio-v3`. V2 production giữ ở `main` tại `b0ec89b`; nhánh này không triển khai production. Không có API trả phí, AI generation hay tiêu credits.
+Nhánh mới `feature/studio-v3-1`, dựa trên V3 `61f0cbe`. V3 Preview trên `feature/studio-v3` giữ nguyên. V2 production giữ ở `main` tại `b0ec89b`; nhánh này không triển khai production. Không có API trả phí, AI generation hay tiêu credits.
+
+
+## V3.1 — Storyboard và handoff thủ công
+
+Sau khi nhập MP4, mỗi cảnh có Storyboard tự động, ảnh JPEG đầu/cuối, prompt ảnh và prompt chuyển động riêng. Prompt là mẫu theo mốc thời gian và hướng dẫn sử dụng ảnh tham chiếu; **chưa phân tích ngữ nghĩa bằng AI**. Có thể sửa/lưu hoặc tải prompt để dùng ở công cụ bên ngoài.
+
+- FFmpeg trích ảnh đầu và frame cuối thực trong khoảng cảnh; ảnh cuối ghi đè tuần tự từng frame, không giữ cả cảnh trong RAM. Ảnh tối đa 640×640, 512 KiB/ảnh; mỗi process 15 giây, toàn lượt trích ảnh 120 giây. Video duration ưu tiên luồng hình để không tạo cảnh rỗng do audio/container padding dài hơn video.
+- Mỗi ô nhập gắn cố định với **ID cảnh**, không đoán cảnh theo tên file. Đổi thứ tự không đổi ID. Muốn nhập vào cảnh nào, chọn ô ảnh/clip của cảnh đó.
+- Ô **Nano Banana Pro** nhận PNG/JPEG; ô **Omni Flash/Plus** nhận MP4. Đây là nhãn công cụ người dùng tự chọn cho file nhập thủ công, không phải chứng thực model hoặc tuyên bố các model này có trong Flow.
+- Ảnh Nano và clip Omni lưu riêng. Nhập clip tự cập nhật replacement trong Timeline và vẫn giữ ảnh. Nếu đã có clip, nhập lại ảnh không ghi đè clip đang dùng. Video thay thế lặp/cắt theo thời lượng cảnh; tiếng lấy từ nguồn mẫu.
+- Khi trim thay đổi, ảnh tham chiếu được cập nhật; prompt đã sửa được giữ nguyên, media cũ được gắn cờ cần kiểm tra. Clip nhập lại sẽ xóa cờ. Dự án V3 cũ có nút **Khởi tạo Storyboard**; không yêu cầu nhập lại nguồn.
+- Nguồn V3.1 dùng localStorage riêng. Blueprint chỉ mô tả service mới `ai-video-production-studio-v3-1-preview`, branch V3.1, autoDeploy tắt; **không áp dụng hoặc deploy** trong đơn hàng này.
+
+LIVE Generate vẫn trả 501. [Thẩm định API và các nguồn chính thức đã thử đọc](docs/provider-api-review.md): các trang Google bị proxy CONNECT 403; API/model mapping Omni chưa được xác minh, không có key/quyền/cơ chế chi phí hợp lệ để bật Generate. Không coi Flow UI là API.
+
+### Kiểm thử V3.1 mới
+
+```sh
+npm run build
+npm run test:storyboard
+npm run test:storyboard:browser
+```
+
+Đợt V3.1 chạy các kiểm thử mới cho Storyboard và trường hợp audio dài hơn video; không chạy lại các suite V3 đã PASS. Chromium mới kiểm tra tham chiếu, sửa prompt, nhập ảnh/clip, giữ ảnh sau nhập clip, ID cảnh sau reorder/trim, xuất/tải file và màn hình mobile.
+
+Bằng chứng: `evidence/v3-1-output.mp4` (4 giây, 320×180, 30fps H.264/AAC), `v3-1-validation.json`, `v3-1-ref-scene-*-*.jpg`, ảnh giao diện `v3-1-storyboard-*.png`. Fixtures ảnh/video là media nhị phân thật tạo bằng FFmpeg cục bộ, **không phải ảnh/video do Nano Banana Pro/Omni/Google Flow sinh ra**. Luồng nhập file đã được kiểm thử, nguồn gốc provider chưa được chứng thực. Chưa có kiểm thử bằng media AI của người dùng hoặc chạy V3.1 trên Render.
 
 ## Chạy cục bộ
 
