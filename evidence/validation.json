@@ -1,0 +1,57 @@
+{
+  "testedAt": "2026-11-17T14:18:40.947Z",
+  "source": {
+    "duration": 17,
+    "width": 320,
+    "height": 180,
+    "audio": "440 Hz sine"
+  },
+  "scenes": [
+    {
+      "start": 0,
+      "duration": 8,
+      "replaced": false
+    },
+    {
+      "start": 8,
+      "duration": 8,
+      "replaced": true
+    },
+    {
+      "start": 16,
+      "duration": 1,
+      "replaced": false
+    }
+  ],
+  "replacement": {
+    "duration": 1,
+    "width": 180,
+    "height": 320,
+    "audio": false
+  },
+  "output": {
+    "duration": 17,
+    "width": 320,
+    "height": 180,
+    "audio": true
+  },
+  "codecs": [
+    {
+      "type": "video",
+      "codec": "h264"
+    },
+    {
+      "type": "audio",
+      "codec": "aac"
+    }
+  ],
+  "checks": [
+    "3 scenes: 8+8+1 seconds",
+    "portrait silent replacement looped to 8 seconds",
+    "original audio present during replacement",
+    "full FFmpeg decode succeeded",
+    "invalid upload rejected",
+    "replacement pixel verified red",
+    "silent source exported successfully"
+  ]
+}
