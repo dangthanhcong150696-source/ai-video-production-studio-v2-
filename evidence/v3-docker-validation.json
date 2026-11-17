@@ -1,0 +1,61 @@
+{
+  "testedAt": "2026-11-17T15:15:35.049Z",
+  "output": {
+    "duration": 5,
+    "width": 320,
+    "height": 180,
+    "audio": true,
+    "fps": 30
+  },
+  "timeline": [
+    {
+      "id": 2,
+      "start": 12,
+      "duration": 2
+    },
+    {
+      "id": 0,
+      "start": 1,
+      "duration": 1
+    },
+    {
+      "id": 1,
+      "start": 6,
+      "duration": 2
+    }
+  ],
+  "frequencies": [
+    {
+      "time": 0.5,
+      "hz": 440,
+      "expected": 440
+    },
+    {
+      "time": 2.2,
+      "hz": 330,
+      "expected": 330
+    },
+    {
+      "time": 3.5,
+      "hz": 880,
+      "expected": 880
+    }
+  ],
+  "checks": [
+    "MOCK PNG and MP4 generated locally",
+    "LIVE generation rejected 501",
+    "manual Flow PNG and MP4 imported",
+    "timeline reorder and trim persisted",
+    "yellow video, mock image and green Flow image pixels verified",
+    "source audio reordered: 440 → 330 → 880 Hz",
+    "full MP4 decoded",
+    "50MB upload rejected with 413 and cleaned",
+    "invalid signatures and cross-site writes rejected",
+    "global concurrent mutation rejected 429",
+    "temporary render parts deleted",
+    "5-project quota enforced",
+    "disk watermark rejects writes; deletion still works",
+    "expired projects cleaned after 6 hours"
+  ],
+  "networkCalls": 0
+}

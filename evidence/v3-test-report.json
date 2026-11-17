@@ -1,0 +1,49 @@
+{
+  "testedAt": "2026-11-17T15:16:24.292287+00:00",
+  "branch": "feature/studio-v3",
+  "productionMainUnchanged": "b0ec89ba74aaf60865ed87dac2b5401974148a17",
+  "build": {
+    "typescriptVite": "passed",
+    "docker": "passed",
+    "tlsVerification": "enabled; optional environment CA supplied using BuildKit secret"
+  },
+  "tests": {
+    "hostNode": {
+      "passed": 4,
+      "failed": 0
+    },
+    "chromium": {
+      "passed": 1,
+      "failed": 0,
+      "scope": "timeline reorder/trim/save, mock image, manual Flow file import, export/download, desktop/mobile"
+    },
+    "dockerNode": {
+      "passed": 4,
+      "failed": 0
+    },
+    "npmAudit": "0 vulnerabilities reported"
+  },
+  "containerSmoke": {
+    "health": 200,
+    "ui": 200,
+    "upload": 201,
+    "scenes": 3,
+    "export": "done",
+    "download": 200,
+    "duration": 17
+  },
+  "container": {
+    "image": "studio-v3:test",
+    "user": "node uid 1000",
+    "PORT": 10000,
+    "DATA_DIR": "/app/data"
+  },
+  "resourceCapsVerification": {
+    "appLimits": "upload size, project count, disk watermark, cleanup, global mutex tested",
+    "containerRAMCap": "UNVERIFIED: docker update --memory 512m failed because host cgroup memory.max was unavailable",
+    "renderFree": "UNVERIFIED: no deployment performed"
+  },
+  "paidAPICalls": 0,
+  "liveGeneration": "disabled, HTTP 501; live media uses manual import only",
+  "productionDeployment": "not performed"
+}

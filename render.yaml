@@ -1,6 +1,8 @@
 services:
   - type: web
-    name: ai-video-production-studio-v2
+    name: ai-video-production-studio-v3-preview
+    branch: feature/studio-v3
+    autoDeploy: false
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile

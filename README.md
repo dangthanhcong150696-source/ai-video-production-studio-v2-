@@ -1,61 +1,80 @@
-# AI Video Production Studio V2
+# AI Video Production Studio V3
 
-Ứng dụng xử lý video thật, chạy cục bộ bằng React + TypeScript + Vite và Express + FFmpeg. Không tích hợp API trả phí hoặc sử dụng credits.
+Nhánh `feature/studio-v3`. V2 production giữ ở `main` tại `b0ec89b`; nhánh này không triển khai production. Không có API trả phí, AI generation hay tiêu credits.
 
-## Chạy
+## Chạy cục bộ
 
-Yêu cầu Node.js 22.12+ (đã kiểm tra Node 24.22.1), npm, `ffmpeg` và `ffprobe` có libx264/AAC trên PATH.
+Node 22.12+ (đã dùng 24), FFmpeg/FFprobe với libx264/AAC. Không cần API key.
 
 ```sh
 npm ci --ignore-scripts --cache /tmp/studio-npm-cache
 npm run dev
 ```
 
-Vite: cổng 5173, backend: 3001. Bản production: `npm run build` rồi `npm start` (cổng 3001 phục vụ cả UI và API). `PORT` thay cổng backend production; `DATA_DIR` thay thư mục dữ liệu mặc định `.data/`.
+Vite 5173 proxy API tới backend 3001. Bản build: `npm run build && npm start`; backend phục vụ cả UI lẫn API, bind `0.0.0.0`, đọc biến `PORT`. `DATA_DIR` mặc định `data-v3/`, tách khỏi `.data/` của V2. Docker dùng `/app/data`.
 
-## Quy trình hoạt động
+## Luồng sản phẩm
 
-1. Nhập video MP4 (tối đa 1 GB, 30 phút). FFprobe xác thực có luồng hình và thời lượng hợp lệ.
-2. FFmpeg phát hiện chuyển cảnh với ngưỡng scene score 0.35, chia thêm đoạn dài thành các cảnh tối đa 8 giây. Đây là phân tích hình ảnh, không phải AI ngữ nghĩa.
-3. Chọn cảnh để xem video nguồn tại thời điểm tương ứng. Thay cảnh bằng video khác; có thể xem riêng video thay thế trong thẻ cảnh. Video ngắn được lặp, video dài bị cắt theo thời lượng cảnh.
-4. Xuất video: scale + letterbox theo tỉ lệ nguồn (rộng tối đa 1280 px), kích thước chẵn, 30 fps, H.264/yuv420p. Ghép hình và lấy **âm thanh nguồn gốc xuyên suốt**, mã hóa AAC. Âm thanh của video thay thế không được dùng. Nguồn im lặng xuất im lặng.
-5. Tải file MP4 bằng nút tải xuống. Các file dự án lưu trong `.data/`; trình duyệt nhớ ID dự án gần nhất.
+1. Nhập MP4 thật: phát hiện hard cut, chia thêm thành cảnh tối đa 8 giây.
+2. Scene Timeline: chọn cảnh, đổi thứ tự bằng ←/→, trim vị trí nguồn và thời lượng 0.1–8 giây, xóa cảnh, lưu hoặc bỏ thay đổi. Timeline tổng tối đa 120 giây; export bị khóa khi có chỉnh sửa chưa lưu.
+3. Thay media bằng MP4/PNG/JPEG từ máy. Ảnh tĩnh giữ đủ thời lượng; video ngắn lặp, dài cắt. Preview ảnh/video trong inspector.
+4. Xuất: FFmpeg chuẩn hóa kích thước chẵn trong khung 1280×720 hoặc 720×1280 tùy chiều nguồn, không phóng lớn; 30 fps, H.264/yuv420p + AAC. **Tiếng nguồn được trim theo mốc nguồn từng cảnh và ghép theo thứ tự timeline mới**. Không lấy tiếng từ video thay thế. Nguồn im lặng xuất im lặng. Thời lượng làm tròn tới frame 1/30 giây.
+5. Tải MP4; xóa dự án để giải phóng dung lượng. Metadata ghi atomic; media/dự án còn trên đĩa sau restart nhưng job xuất chỉ nằm trong RAM, cần xuất lại để tải.
 
-## Kiểm thử và bằng chứng
+## Provider adapters — trạng thái thật
+
+| Adapter | Ảnh | Video | API / credits |
+| --- | --- | --- | --- |
+| MOCK | FFmpeg tạo PNG màu | FFmpeg tạo MP4 2 giây | Không mạng; màu xác định theo prompt, **không phải AI generation** |
+| LIVE / manual | Nhập PNG/JPEG | Nhập MP4 | Chỉ file người dùng tải về từ Google Flow; không đăng nhập/điều khiển Flow |
+| LIVE generation | Chưa hỗ trợ | Chưa hỗ trợ | Endpoint trả 501, không gửi request ra ngoài |
+
+`server/providers.mjs` cung cấp registry adapter dùng chung image/video. Metadata lưu `mode`, `kind`, `origin`, `prompt`, `networkCalls`. Không nhận URL remote để tránh backend tải URL tùy ý. Nhãn Google Flow là nguồn người dùng tự khai, không phải chứng thực xuất xứ. Luồng nhập được kiểm thử bằng media tổng hợp; chưa kiểm thử bằng tài khoản Google Flow thật.
+
+## Bảo vệ upload và profile Render Free
+
+- Một mutation/upload/render toàn server; yêu cầu cạnh tranh trả 429, không xếp hàng vô hạn.
+- File tối đa **50 MiB**, video tối đa **120 giây**, **60 fps**, số pixel tối đa 1920×1080 (kể cả dọc), cạnh không quá 4096. Tối đa **60 cảnh / 5 dự án**.
+- Kiểm tra đuôi file + magic bytes + FFprobe. Chỉ MP4 có `ftyp`, PNG/JPEG; không nhận SVG, playlist hoặc URL. FFprobe input chỉ dùng protocol `file,pipe`, timeout 10 giây.
+- FFmpeg một thread, một filter thread; mỗi process tối đa 120 giây, render tổng ngân sách 180 giây. Giới hạn từng part 16 MiB, output 128 MiB; kiểm tra thời lượng để không trả thành công khi file bị cắt do giới hạn.
+- Quota dữ liệu **512 MiB**, giữ vùng dự phòng cho upload/output, kiểm tra giữa các part; có thể từ chối trước khi đĩa đầy. Xóa dự án vẫn được phép khi chạm watermark. Đây là quota ứng dụng, không phải filesystem quota của OS.
+- Xóa upload tạm khi lỗi, xóa part sau render. Dự án không cập nhật quá **6 giờ** được dọn khi khởi động hoặc trước mutation kế tiếp; không có cron chạy nền. Cần tải thành phẩm về máy, filesystem hosting Free không bền vững.
+- Chặn browser write `Sec-Fetch-Site: cross-site`, JSON tối đa 16 KiB, filename ngẫu nhiên, ID/path kiểm tra; `nosniff`. Đây không thay thế chống abuse ở reverse proxy.
+- Có thể đặt **`STUDIO_PASSWORD`** để bật HTTP Basic Auth cho UI/API/media; username **`studio`**. Nhập mật khẩu qua hosting settings, không commit. `/api/health` vẫn công khai cho health check. Chỉ dùng Basic Auth qua HTTPS khi public. Nếu không đặt password, app chạy chế độ demo không bảo vệ truy cập, UI hiển thị cảnh báo.
+- Request timeout 120 giây, headers timeout 30 giây, tối đa 32 socket. Không coi đây là sandbox an toàn để xử lý mọi file đối nghịch; cần ingress rate limit, cập nhật FFmpeg và auth từng người trước khi mở dịch vụ nhiều người.
+
+Các giới hạn nhằm giảm tải; **chưa có bằng chứng vận hành trên máy Render Free thực**, không cam kết xử lý mọi video sát giới hạn RAM/CPU.
+
+## Kiểm thử
 
 ```sh
 npm run build
 npm test
-npx playwright test
+npm run test:browser
 ```
 
-`npm test` tạo MP4 17 giây có tone 440 Hz, kiểm tra chia 8+8+1, thay cảnh giữa bằng video đỏ dọc 1 giây không tiếng, lặp/chuẩn hóa, kiểm tra điểm ảnh đỏ ở giây 9, tiếng trong đoạn thay, codec H.264/AAC, thời lượng, giải mã toàn bộ file, từ chối file lỗi, xuất nguồn im lặng. Kiểm thử thứ hai xác minh phát hiện hard cut đen → trắng.
+- Bộ regression V2 kiểm tra chia cảnh, thay video, âm thanh, decode, file lỗi và nguồn im lặng (kết quả tạm nằm trong `/tmp`).
+- V3 test tạo nguồn 17 giây, ba đoạn có tone khác nhau. Tạo mock PNG/MP4, nhập file PNG/MP4 theo luồng Google Flow, đổi thứ tự/trim thành 5 giây. Kiểm tra pixel ảnh/video, tiếng theo timeline **440 → 330 → 880 Hz**, decode toàn bộ MP4.
+- Kiểm tra LIVE generation 501, upload quá 50 MiB 413 và cleanup, signature sai, cross-site 403, cạnh tranh 429, 5 dự án, watermark đĩa 507, xóa khi quota đầy, TTL cleanup và password đúng/sai.
+- Chromium kiểm tra thao tác timeline, MOCK, Flow file input, export/download, screenshot desktop/mobile và không có lỗi JS/tràn màn hình. Dùng `/usr/bin/chromium`; backend test cổng 43130 riêng, dữ liệu tạm ngẫu nhiên.
 
-Playwright dùng Chromium `/usr/bin/chromium`: nhập MP4 qua UI, xác nhận 3 cảnh, xuất và tải file, chụp giao diện desktop/mobile, kiểm tra không tràn chiều ngang và không có lỗi JavaScript. Nếu máy khác chưa có Chromium, cần cài trình duyệt và điều chỉnh executablePath trong playwright.config.ts.
+Bằng chứng V3: `evidence/v3-output.mp4`, `v3-validation.json`, `v3-desktop.png`, `v3-mobile.png`. File bằng chứng V2 được giữ để tham khảo lịch sử, không đại diện lần chạy V3.
 
-Bằng chứng tái tạo mỗi lần chạy: `evidence/validation.json`, `evidence/smoke-output.mp4`, `evidence/workflow-desktop.png`, `evidence/workflow-mobile.png`.
-
-## Giới hạn MVP
-
-- Giao diện node là pipeline cố định, chưa kéo thả/nối node tùy ý; chưa có sinh video AI, API bên ngoài, tài khoản hoặc cộng tác.
-- Không có hủy tác vụ, hàng đợi toàn cục, xóa dự án, quota đĩa hoặc dọn dữ liệu tự động. Xử lý video lớn có thể chậm; mỗi lệnh FFmpeg giới hạn 10 phút. Cần tự dọn `.data/` khi không dùng.
-- Job xuất lưu trong bộ nhớ: sau khi restart backend, file dự án vẫn còn nhưng cần xuất lại để bật tải xuống.
-- Chưa kiểm thử video HDR, VFR phức tạp, file hỏng có chủ đích hoặc video 30 phút/1 GB. Tiếng được giữ nội dung và mốc thời gian nhưng có mã hóa lại AAC, không bit-exact.
-- Dành cho máy phát triển đáng tin cậy. Chưa có đăng nhập, phân quyền hoặc hạn chế tốc độ; không triển khai API trực tiếp ra Internet. File upload được lưu trên máy chủ, không gửi tới nhà cung cấp AI.
-
-## Render / Docker
-
-`Dockerfile`, `.dockerignore` và `render.yaml` nằm tại thư mục gốc. Trên Render chọn repository này, nhánh `main`, Root Directory để trống, Dockerfile Path `./Dockerfile`, runtime Docker và gói Free. Backend tự đọc `PORT` do Render cấp và lắng nghe `0.0.0.0`; không dùng Vite dev server trong production. Health check: `/api/health`.
+## Docker và nhánh preview
 
 ```sh
-docker build -t studio-v2 .
-docker run --rm -p 3001:10000 -e PORT=10000 studio-v2
+docker build -t studio-v3 .
+docker run --rm -d --name studio-v3-smoke -p 127.0.0.1:3012:10000 -e PORT=10000 studio-v3
+node tests/docker-smoke.mjs
+docker stop studio-v3-smoke
 ```
 
-Container có FFmpeg/FFprobe, giao diện build sẵn và chạy bằng user `node`. Dữ liệu `.data` của máy phát triển bị loại khỏi build context. Gói Free dùng filesystem tạm thời; video có thể mất khi restart/redeploy. Không yêu cầu API key hoặc dịch vụ AI trả phí. Chỉ chọn Free khi dashboard xác nhận giá $0.
+Nếu máy có HTTPS inspection proxy, dùng CA tin cậy qua secret: `docker build --secret id=build_ca,src=/etc/ssl/certs/ca-certificates.crt -t studio-v3 .`. Không tắt TLS hoặc đóng gói CA riêng vào image. Container chạy user `node`, có FFmpeg/FFprobe.
 
-Nếu build trong môi trường có proxy HTTPS riêng, có thể cấp CA tin cậy bằng BuildKit secret (không commit chứng chỉ, không tắt TLS): `docker build --secret id=build_ca,src=/etc/ssl/certs/ca-certificates.crt -t studio-v2 .`. Render thông thường không cần secret này.
+`render.yaml` chỉ mô tả service mới **studio-v3-preview**, branch `feature/studio-v3`, `plan: free`, `autoDeploy: false`. **Không áp dụng blueprint này lên service production V2.** Chưa tạo service, chưa deploy và chưa xác minh chính sách Free hiện tại. Không tự bật billing/persistent disk hoặc tích hợp API.
 
-Kiểm tra container ở cổng riêng: `docker run --rm -d --name studio-render-smoke -p 127.0.0.1:3012:10000 -e PORT=10000 studio-v2`, sau đó chạy `node tests/docker-smoke.mjs`. Script kiểm tra health, UI, upload MP4, chia cảnh, xuất và tải file vào `/tmp/studio-container-output.mp4`. Dừng container bằng `docker stop studio-render-smoke`.
+## Còn thiếu
 
-Trong container dùng `DATA_DIR=/app/data` (đã khai báo trong Dockerfile và render.yaml), tránh thư mục ẩn bị middleware tải file bỏ qua. Nếu service Render cũ đã có biến `DATA_DIR`, đặt lại thành `/app/data` hoặc xóa để dùng mặc định của image.
+Chưa có LIVE AI generation, tích hợp Google Flow API, drag/drop tự do cho node/timeline, undo nhiều bước, thư viện media, workflow tùy ý, hủy job/queue bền vững, tài khoản/phân quyền từng người hay lưu trữ lâu dài. Mật khẩu chung chỉ phù hợp demo riêng. Upload HDR/VFR/phức tạp và sát giới hạn tài nguyên chưa được nghiệm thu trên Render Free. Source audio được mã hóa lại AAC, không bit-exact. Không deploy hoặc thay đổi `main` trong đợt V3.
+
+Bằng chứng Docker: `evidence/v3-docker-output.mp4`, `v3-docker-validation.json` và tổng kết `v3-test-report.json`. Bộ Node test chạy cả trên host và image FFmpeg Debian với user `node`. Thử áp RAM 512 MiB qua `docker update` bị host từ chối vì thiếu cgroup `memory.max`, nên **chưa xác minh chạy dưới RAM cap 512 MiB**; không suy diễn kết quả này thành nghiệm thu Render Free.
