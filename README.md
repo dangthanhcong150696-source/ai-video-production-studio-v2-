@@ -78,3 +78,7 @@ Nếu máy có HTTPS inspection proxy, dùng CA tin cậy qua secret: `docker bu
 Chưa có LIVE AI generation, tích hợp Google Flow API, drag/drop tự do cho node/timeline, undo nhiều bước, thư viện media, workflow tùy ý, hủy job/queue bền vững, tài khoản/phân quyền từng người hay lưu trữ lâu dài. Mật khẩu chung chỉ phù hợp demo riêng. Upload HDR/VFR/phức tạp và sát giới hạn tài nguyên chưa được nghiệm thu trên Render Free. Source audio được mã hóa lại AAC, không bit-exact. Không deploy hoặc thay đổi `main` trong đợt V3.
 
 Bằng chứng Docker: `evidence/v3-docker-output.mp4`, `v3-docker-validation.json` và tổng kết `v3-test-report.json`. Bộ Node test chạy cả trên host và image FFmpeg Debian với user `node`. Thử áp RAM 512 MiB qua `docker update` bị host từ chối vì thiếu cgroup `memory.max`, nên **chưa xác minh chạy dưới RAM cap 512 MiB**; không suy diễn kết quả này thành nghiệm thu Render Free.
+
+### V3-04: preview độc lập và mật khẩu
+
+Blueprint preview khai báo `STUDIO_PASSWORD: generateValue: true` để Render tự sinh giá trị bí mật khi tạo service mới; không có giá trị mật khẩu trong Git. Đây là cấu hình chuẩn bị, không chứng minh biến đã được tạo trên Render. Username đăng nhập là `studio`; `/api/health` vẫn public. Giữ `autoDeploy: false`, service riêng và branch `feature/studio-v3`. Chỉ áp dụng sau khi tài khoản Render xác nhận giá $0; không đổi service V2, thêm thẻ hoặc chọn gói trả phí.

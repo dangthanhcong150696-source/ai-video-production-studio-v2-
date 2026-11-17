@@ -12,3 +12,5 @@ services:
         value: production
       - key: DATA_DIR
         value: /app/data
+      - key: STUDIO_PASSWORD
+        generateValue: true

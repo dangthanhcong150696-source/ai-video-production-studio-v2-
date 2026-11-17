@@ -1,0 +1,51 @@
+{
+  "order": "V3-04",
+  "checkedAt": "2026-11-17T15:26:53.142504+00:00",
+  "status": "BLOCKED_NOT_DEPLOYED",
+  "baseCommit": "6a2f9fd42bbb05183c81c68dd4e50da4afbbd984",
+  "branch": "feature/studio-v3",
+  "productionMain": "b0ec89ba74aaf60865ed87dac2b5401974148a17",
+  "configuration": {
+    "service": "ai-video-production-studio-v3-preview",
+    "dockerfile": "./Dockerfile",
+    "planRequested": "free",
+    "accountCostConfirmed": false,
+    "autoDeploy": false,
+    "healthCheckPath": "/api/health",
+    "bind": "0.0.0.0",
+    "port": "process.env.PORT",
+    "password": "Render generateValue configured; not provisioned or enabled on any remote service"
+  },
+  "blockers": [
+    "No Render credential binding or Render-related environment variable present",
+    "No authenticated Render connector/browser controls available in this session",
+    "dashboard.render.com and api.render.com both blocked by proxy CONNECT HTTP 403; no Render application HTTP response received"
+  ],
+  "localBaseline": {
+    "scope": "LOCAL Codex Cloud, not Render; Node V3 integration tests and descendant processes",
+    "exitCode": 0,
+    "wallSeconds": 7.732,
+    "sampleIntervalSeconds": 0.1,
+    "samples": 74,
+    "peakSampledSumRssMiB": 343.11,
+    "memoryCaveat": "Sampled sum of process RSS includes shared pages multiple times; not cgroup memory, not a hard RAM-cap test, not Render telemetry."
+  },
+  "localChecks": [
+    "V3 timeline + mock image/video + manual import + real MP4 + quota tests passed",
+    "Optional password correct/incorrect authentication test passed"
+  ],
+  "remoteChecks": {
+    "previewHTTPSURL": null,
+    "upload": "NOT RUN",
+    "timeline": "NOT RUN",
+    "imageVideoImport": "NOT RUN",
+    "exportDownload": "NOT RUN",
+    "memory": "NOT MEASURED",
+    "processingTime": "NOT MEASURED",
+    "quotaResponses": "NOT RUN"
+  },
+  "productionActions": "none",
+  "billingActions": "none",
+  "liveAIGeneration": "disabled",
+  "paidAPIRequests": 0
+}
