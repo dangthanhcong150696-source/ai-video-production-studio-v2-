@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { applySkillRecipe, SKILL_RECIPES, type SkillName } from "./skillEngine";
 type Asset = { file: string; provider: string; originalName: string };
 type Board = {
   referenceKey: string;
@@ -42,7 +43,8 @@ function Card({
   const board = scene.storyboard;
   const [image, setImage] = useState(board?.prompts.image || ""),
     [motion, setMotion] = useState(board?.prompts.motion || ""),
-    [provider, setProvider] = useState("Omni Flash");
+    [provider, setProvider] = useState("Omni Flash"),
+    [selectedSkill, setSelectedSkill] = useState<SkillName>("continuity");
   useEffect(() => {
     setImage(board?.prompts.image || "");
     setMotion(board?.prompts.motion || "");
@@ -124,6 +126,33 @@ function Card({
           onChange={(e) => setMotion(e.target.value)}
         />
       </label>
+      <div className="notice">
+        <strong>Skill Engine · chuẩn bị prompt offline</strong>
+        <p>Áp dụng quy tắc vào bản nháp, không gọi AI, không tiêu credits. Kiểm tra rồi bấm Lưu prompt.</p>
+        <div className="actions">
+          <select
+            aria-label={`Skill cho cảnh ${scene.id + 1}`}
+            disabled={locked}
+            value={selectedSkill}
+            onChange={(e) => setSelectedSkill(e.target.value as SkillName)}
+          >
+            {SKILL_RECIPES.map((skill) => (
+              <option key={skill.id} value={skill.id}>{skill.label}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            disabled={locked}
+            onClick={() => {
+              try {
+                const result = applySkillRecipe(scene, {image, motion}, selectedSkill);
+                setImage(result.image);
+                setMotion(result.motion);
+              } catch (e) { window.alert((e as Error).message); }
+            }}
+          >Áp dụng Skill vào prompt</button>
+        </div>
+      </div>
       <div className="actions">
         <button
           disabled={locked || !dirty}
