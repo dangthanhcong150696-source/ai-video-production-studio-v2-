@@ -1,0 +1,31 @@
+name: V3.1 Skill Engine validation
+on:
+  push:
+    branches:
+      - feature/v3-1-skill-engine
+  pull_request:
+    branches:
+      - feature/studio-v3-1
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Dependencies
+        run: npm ci --ignore-scripts
+      - name: Compile and bundle
+        run: npm run build
+      - name: Skill Engine unit tests
+        run: node --test tests/skill-engine.test.mjs
+      - name: Storyboard integration tests
+        run: npm run test:storyboard
