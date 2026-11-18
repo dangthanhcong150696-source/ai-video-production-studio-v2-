@@ -31,7 +31,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
       - name: Storyboard integration tests
         run: npm run test:storyboard
-      - name: Install Chromium
-        run: sudo apt-get install -y chromium
+      - name: Install Playwright Chromium (no Snap)
+        run: npx playwright install --with-deps chromium
       - name: Browser Storyboard end-to-end
         run: npm run test:storyboard:browser
