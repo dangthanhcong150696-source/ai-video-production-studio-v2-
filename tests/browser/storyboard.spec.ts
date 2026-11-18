@@ -28,8 +28,8 @@ test("Storyboard V3.1 edits prompts and binds manual media to stable scenes", as
     .fill("Slow camera move, 2 seconds, no morphing.");
   await page.getByLabel("Skill cho cảnh 1", { exact: true }).selectOption("continuity");
   await page.getByRole("button", { name: "Áp dụng Skill vào prompt", exact: true }).first().click();
-  await expect(page.getByLabel("Prompt ảnh cảnh 1", { exact: true })).toContainText("[SKILL:continuity]");
-  await expect(page.getByLabel("Prompt chuyển động cảnh 1", { exact: true })).toContainText("[SKILL:continuity]");
+  await expect(page.getByLabel("Prompt ảnh cảnh 1", { exact: true })).toHaveValue(/\\[SKILL:continuity\\]/);
+  await expect(page.getByLabel("Prompt chuyển động cảnh 1", { exact: true })).toHaveValue(/\\[SKILL:continuity\\]/);
   await page.getByRole("button", { name: "Áp dụng Skill vào prompt", exact: true }).first().click();
   const promptOnce = await page.getByLabel("Prompt ảnh cảnh 1", { exact: true }).inputValue();
   expect(promptOnce.match(/\\[SKILL:continuity\\]/g)?.length).toBe(1);
@@ -77,7 +77,7 @@ test("Storyboard V3.1 edits prompts and binds manual media to stable scenes", as
   );
   await expect(
     page.getByLabel("Prompt ảnh cảnh 1", { exact: true }),
-  ).toContainText("[SKILL:continuity]");
+  ).toHaveValue(/\\[SKILL:continuity\\]/);
   await page.getByRole("button", { name: "Xuất video" }).click();
   await expect(
     page.getByRole("link", { name: "Tải MP4 hoàn thành" }),
