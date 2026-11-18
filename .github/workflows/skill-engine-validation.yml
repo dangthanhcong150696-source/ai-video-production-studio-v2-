@@ -27,5 +27,7 @@ jobs:
         run: npm run build
       - name: Skill Engine unit tests
         run: node --test tests/skill-engine.test.mjs
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
       - name: Storyboard integration tests
         run: npm run test:storyboard
