@@ -4,6 +4,7 @@ type Asset = { file: string; provider: string; originalName: string };
 type Board = {
   referenceKey: string;
   prompts: { image: string; motion: string };
+  lockedPromptPrefix?: string;
   image?: Asset;
   video?: Asset;
   needsReview?: boolean;
@@ -15,12 +16,21 @@ type Scene = {
   storyboard?: Board;
 };
 type Props = {
-  project: { id: string; scenes: Scene[] };
+  project: {
+    id: string;
+    scenes: Scene[];
+    characterLock?: { promptPrefix?: string; rightsFlagged?: boolean; rightsStatus?: string } | null;
+  };
   locked: boolean;
   onUpdate: () => Promise<void>;
   onError: (message: string) => void;
   onBusy: (message: string) => void;
 };
+function withPrefix(prefix: string, body: string) {
+  const locked = prefix.trim();
+  if (!locked || body.startsWith(locked)) return body;
+  return `${locked}\n\n${body}`;
+}
 async function request(path: string, options: RequestInit) {
   const r = await fetch("/api" + path, options),
     p = await r.json();
@@ -33,12 +43,14 @@ function Card({
   projectId,
   locked,
   action,
+  prefix,
 }: {
   scene: Scene;
   index: number;
   projectId: string;
   locked: boolean;
   action: (fn: () => Promise<unknown>) => Promise<void>;
+  prefix: string;
 }) {
   const board = scene.storyboard;
   const [image, setImage] = useState(board?.prompts.image || ""),
@@ -104,6 +116,11 @@ function Card({
           </a>
         ))}
       </div>
+      {prefix && (
+        <pre className="prefix" aria-label={`Prefix khóa cảnh ${scene.id + 1}`}>
+          {prefix}
+        </pre>
+      )}
       <label>
         Prompt ảnh · Nano Banana Pro
         <textarea
@@ -173,7 +190,9 @@ function Card({
           download={`scene-${scene.id + 1}-prompts.txt`}
           href={
             "data:text/plain;charset=utf-8," +
-            encodeURIComponent(`IMAGE\n${image}\n\nMOTION\n${motion}`)
+            encodeURIComponent(
+              `IMAGE\n${withPrefix(prefix, image)}\n\nMOTION\n${withPrefix(prefix, motion)}`,
+            )
           }
         >
           ↓ Tải prompt
@@ -309,6 +328,12 @@ export default function Storyboard({
         người dùng chọn; chưa xác minh API hoặc khả năng truy cập qua Google
         Flow. Ứng dụng không mở Flow, gửi prompt hay tự tạo media AI.
       </p>
+      {project.characterLock?.rightsFlagged && (
+        <div role="status" className="flag">
+          Character lock rightsStatus {project.characterLock.rightsStatus}: flagged
+          trong manifest và giao diện.
+        </div>
+      )}
       <div className="story-grid">
         {project.scenes.map((s, i) => (
           <Card
@@ -318,6 +343,7 @@ export default function Storyboard({
             projectId={project.id}
             locked={locked || working}
             action={action}
+            prefix={project.characterLock?.promptPrefix || s.storyboard?.lockedPromptPrefix || ""}
           />
         ))}
       </div>

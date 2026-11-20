@@ -21,9 +21,12 @@ import {
   pruneReferences,
 } from "./storyboard.mjs";
 import { limits, failure } from "./limits.mjs";
+import { createStorage } from "./storage/index.mjs";
+import { registerV32 } from "./v32.mjs";
 const app = express(),
   root = resolve(process.env.DATA_DIR || "data-v3");
 await mkdir(join(root, "uploads"), { recursive: true });
+const storage = await createStorage();
 const jobs = new Map();
 let processing = false;
 const dir = (id) => {
@@ -53,13 +56,24 @@ async function bytes(path) {
   return sum;
 }
 async function cleanup() {
+  await mkdir(join(root, "uploads"), { recursive: true });
   for (const f of await readdir(root, { withFileTypes: true })) {
     const path = join(root, f.name);
     if (f.name === "uploads") {
       for (const item of await readdir(path))
         await rm(join(path, item), { force: true });
     } else if (f.isDirectory() && /^[a-f0-9-]{36}$/.test(f.name)) {
-      const s = await stat(join(path, "project.json")).catch(() => stat(path));
+      const projectFile = join(path, "project.json");
+      let persisted = false;
+      try {
+        persisted =
+          JSON.parse(await readFile(projectFile, "utf8")).persisted === true;
+      } catch {
+        /* A project without readable metadata still follows the TTL. */
+      }
+      // Saved projects are exempt from the 6h TTL. A wiped disk restores them from storage.
+      if (persisted) continue;
+      const s = await stat(projectFile).catch(() => stat(path));
       if (Date.now() - s.mtimeMs > limits.ttlMs) {
         await rm(path, { recursive: true, force: true });
         jobs.delete(f.name);
@@ -121,7 +135,7 @@ const upload = multer({
 });
 function transaction(
   handler,
-  { field, uploadFile = false, freeSpace = false } = {},
+  { field, uploadFile = false, freeSpace = false, uploader, array } = {},
 ) {
   return async (req, res, next) => {
     if (processing)
@@ -137,16 +151,19 @@ function transaction(
       )
         throw failure("Không đủ quota lưu trữ; xóa dự án cũ trước", 507);
       if (uploadFile)
-        await new Promise((ok, fail) =>
-          upload.single(field || "video")(req, res, (e) =>
-            e ? fail(e) : ok(),
-          ),
-        );
+        await new Promise((ok, fail) => {
+          const mw = uploader || upload;
+          const done = (e) => (e ? fail(e) : ok());
+          if (array) mw.array(field || "video", array)(req, res, done);
+          else mw.single(field || "video")(req, res, done);
+        });
       response = await handler(req, res);
     } catch (e) {
       error = e;
     } finally {
       if (req.file) await unlink(req.file.path).catch(() => {});
+      for (const file of req.files || [])
+        await unlink(file.path).catch(() => {});
       if (!response?.retain) processing = false;
     }
     if (error) return next(error);
@@ -173,15 +190,23 @@ async function attach(p, s, file, meta) {
   if (old && !assetUsed(p, old))
     await unlink(join(dir(p.id), old)).catch(() => {});
 }
-app.get("/api/health", (req, res) => res.json({ ok: true, version: 3 }));
-app.get("/api/config", (req, res) =>
-  res.json({
-    limits,
-    providers,
-    authentication: !!process.env.STUDIO_PASSWORD,
-    processing,
-  }),
+app.get("/api/health", (req, res) =>
+  res.json({ ok: true, version: 3, appVersion: "3.2" }),
 );
+app.get("/api/config", async (req, res, next) => {
+  try {
+    res.json({
+      limits,
+      providers,
+      authentication: !!process.env.STUDIO_PASSWORD,
+      processing,
+      appVersion: "3.2",
+      storage: await storage.status(),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 app.post(
   "/api/projects",
   transaction(
@@ -474,17 +499,24 @@ app.get("/api/projects/:id/download", async (req, res, next) => {
     next(e);
   }
 });
+registerV32(app, { root, dir, load, save, transaction, jobs, storage });
 app.use(express.static(resolve("dist")));
 app.use((err, req, res, next) => {
   const status = err.code === "LIMIT_FILE_SIZE" ? 413 : err.status || 400;
   const error =
     err.code === "LIMIT_FILE_SIZE"
       ? "File vượt giới hạn 50 MB"
-      : status >= 500 && status !== 501 && status !== 507
+      : status >= 500 && status !== 501 && status !== 502 && status !== 507
         ? "Xử lý thất bại; hãy thử clip ngắn hơn"
         : err.message;
   console.error(err.message);
-  res.status(status).json({ error });
+  const body = { error };
+  if (err.configured === false) {
+    body.configured = false;
+    body.backend = err.backend || "drive";
+  }
+  if (err.mismatches) body.mismatches = err.mismatches;
+  res.status(status).json(body);
 });
 const server = app.listen(Number(process.env.PORT || 3001), "0.0.0.0", () =>
   console.log("Studio V3 listening"),

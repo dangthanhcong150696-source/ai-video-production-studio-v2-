@@ -2,6 +2,15 @@
 
 Nhánh mới `feature/studio-v3-1`, dựa trên V3 `61f0cbe`. V3 Preview trên `feature/studio-v3` giữ nguyên. V2 production giữ ở `main` tại `b0ec89b`; nhánh này không triển khai production. Không có API trả phí, AI generation hay tiêu credits.
 
+## V3.2 — lưu, khôi phục, character lock
+
+Nhánh `feature/studio-v3-2` nối tiếp V3.1, không ghi đè production và không đổi `render.yaml`. Dự án lưu được vào `SAVE_DIR` hoặc Google Drive (chỉ khi có credential), xuất/nhập bundle `.zip`, và được liệt kê bằng `GET /api/projects` nên id không chỉ nằm trong localStorage. Bản đã lưu không bị dọn TTL 6 giờ; máy mới khôi phục từ kho hoặc từ bundle và từ chối nếu sha256 lệch. Character lock bắt buộc `rightsStatus`; `unknown` và `internal-only` bị gắn cờ. Cách chạy, biến môi trường Drive và scope `https://www.googleapis.com/auth/drive` nằm trong [docs/V3_2.md](docs/V3_2.md). Số đo QC: [docs/V3_2_QC_REPORT.md](docs/V3_2_QC_REPORT.md).
+
+```sh
+npm test
+npm run test:v3.2
+```
+
 
 ## V3.1 — Storyboard và handoff thủ công
 

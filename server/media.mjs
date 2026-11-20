@@ -57,6 +57,7 @@ export async function probe(file) {
       video.avg_frame_rate
         ?.split("/")
         .reduce((a, b) => Number(a) / Number(b)) || 0,
+    frames: Number(video.nb_frames) > 0 ? Number(video.nb_frames) : null,
   };
 }
 export async function validateMedia(file, { source = false } = {}) {
@@ -168,6 +169,20 @@ export function editTimeline(p, scenes) {
     return { ...original, start: s.start, duration: s.duration };
   });
 }
+// stream_loop restarts at frame 0. A clip that already covers the scene is trimmed instead.
+export function videoReplacementArgs(file, mediaDuration, sceneDuration) {
+  if (!Number.isFinite(mediaDuration) || mediaDuration <= 0)
+    throw failure("Không đọc được thời lượng clip thay thế");
+  if (mediaDuration >= sceneDuration) return ["-i", file];
+  return ["-stream_loop", "-1", "-i", file];
+}
+export function sceneVideoFilter(width, height, { holdLastFrame = false, duration = 0 } = {}) {
+  const geometry = `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2,setsar=1`;
+  if (!holdLastFrame) return `${geometry},fps=30,format=yuv420p`;
+  // Trim before fps so rate conversion cannot sample a looped first frame.
+  // Clone at most one 30fps frame when the trimmed clip ends slightly early.
+  return `trim=duration=${duration},setpts=PTS-STARTPTS,${geometry},fps=30,tpad=stop_mode=clone:stop_duration=0.034,format=yuv420p`;
+}
 export async function render(
   project,
   dir,
@@ -198,11 +213,18 @@ export async function render(
       const name = `part-${index}.mp4`,
         part = join(dir, name);
       temps.push(part);
-      const input = scene.replacement
-        ? scene.kind === "image"
-          ? ["-loop", "1", "-i", join(dir, scene.replacement)]
-          : ["-stream_loop", "-1", "-i", join(dir, scene.replacement)]
-        : ["-ss", String(scene.start), "-i", join(dir, "source.mp4")];
+      let input;
+      let holdLastFrame = false;
+      if (!scene.replacement) {
+        input = ["-ss", String(scene.start), "-i", join(dir, "source.mp4")];
+      } else if (scene.kind === "image") {
+        input = ["-loop", "1", "-i", join(dir, scene.replacement)];
+      } else {
+        const clip = join(dir, scene.replacement);
+        const mediaDuration = (await probe(clip)).duration;
+        input = videoReplacementArgs(clip, mediaDuration, scene.duration);
+        holdLastFrame = mediaDuration >= scene.duration;
+      }
       await run(
         "ffmpeg",
         [
@@ -222,7 +244,10 @@ export async function render(
           "-filter_threads",
           "1",
           "-vf",
-          `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=30,format=yuv420p`,
+          sceneVideoFilter(w, h, {
+            holdLastFrame,
+            duration: scene.duration,
+          }),
           "-c:v",
           "libx264",
           "-preset",

@@ -83,6 +83,7 @@ export async function ensureStoryboard(project, dir) {
           refs,
           prompts: old.promptsEdited ? old.prompts : defaultPrompts(scene),
           promptsEdited: !!old.promptsEdited,
+          lockedPromptPrefix: project.characterLock?.promptPrefix || "",
           needsReview: !!(
             old.needsReview ||
             (changed && (old.image || old.video))
