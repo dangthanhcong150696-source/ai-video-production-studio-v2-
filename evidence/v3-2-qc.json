@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-20T16:16:24.209Z",
+  "startedAt": "2026-11-20T16:42:42.995Z",
   "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
   "fixtures": [
     {
@@ -170,7 +170,7 @@
         "match": true
       },
       {
-        "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+        "path": "media/media-043b249f-7835-4e27-9d5c-cc74e437c026.mp4",
         "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
         "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
         "match": true
@@ -188,7 +188,7 @@
         "match": true
       },
       {
-        "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+        "path": "media/media-08acdcbb-f114-418b-8f9e-6a7b85a99460.mp4",
         "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
         "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
         "match": true
@@ -206,7 +206,7 @@
         "match": true
       },
       {
-        "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+        "path": "media/media-6de965ef-c70d-4023-aa2c-bb8ecd34e07c.mp4",
         "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
         "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
         "match": true
@@ -224,7 +224,7 @@
         "match": true
       },
       {
-        "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+        "path": "media/character/14944977-bf47-4c73-96bc-bd514f4e7731/ref-0.jpg",
         "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
         "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
         "match": true
@@ -325,7 +325,7 @@
         "match": true
       },
       {
-        "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+        "path": "media/media-043b249f-7835-4e27-9d5c-cc74e437c026.mp4",
         "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
         "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
         "match": true
@@ -343,7 +343,7 @@
         "match": true
       },
       {
-        "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+        "path": "media/media-08acdcbb-f114-418b-8f9e-6a7b85a99460.mp4",
         "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
         "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
         "match": true
@@ -361,7 +361,7 @@
         "match": true
       },
       {
-        "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+        "path": "media/media-6de965ef-c70d-4023-aa2c-bb8ecd34e07c.mp4",
         "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
         "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
         "match": true
@@ -379,7 +379,7 @@
         "match": true
       },
       {
-        "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+        "path": "media/character/14944977-bf47-4c73-96bc-bd514f4e7731/ref-0.jpg",
         "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
         "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
         "match": true
@@ -527,6 +527,40 @@
       "sha256Match": true
     }
   },
+  "endFrames": {
+    "ok": true,
+    "scenes": [
+      {
+        "index": 0,
+        "frame": 239,
+        "time": 7.967,
+        "versusFirst": 0.402572,
+        "versusSourceFirst": 0.624565,
+        "versusSourceEnd": 0.914127
+      },
+      {
+        "index": 1,
+        "frame": 479,
+        "time": 15.967,
+        "versusFirst": 0.737008,
+        "versusSourceFirst": 0.839791,
+        "versusSourceEnd": 0.960272
+      },
+      {
+        "index": 2,
+        "frame": 719,
+        "time": 23.967,
+        "versusFirst": 0.342689,
+        "versusSourceFirst": 0.613111,
+        "versusSourceEnd": 0.959177
+      }
+    ],
+    "reference": "ORDER_008F_FINAL is not in this workspace"
+  },
+  "referenceExport": {
+    "available": false,
+    "reason": "ORDER_008F_FINAL is not in this workspace or the fixture directory"
+  },
   "checks": [
     {
       "name": "source is 720x1280 with audio near 24s",
@@ -587,6 +621,48 @@
       }
     },
     {
+      "name": "8.04s clips in 8.00s scenes do not snap the last frame back to the first",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "scenes": [
+          {
+            "index": 0,
+            "frame": 239,
+            "time": 7.967,
+            "versusFirst": 0.402572,
+            "versusSourceFirst": 0.624565,
+            "versusSourceEnd": 0.914127
+          },
+          {
+            "index": 1,
+            "frame": 479,
+            "time": 15.967,
+            "versusFirst": 0.737008,
+            "versusSourceFirst": 0.839791,
+            "versusSourceEnd": 0.960272
+          },
+          {
+            "index": 2,
+            "frame": 719,
+            "time": 23.967,
+            "versusFirst": 0.342689,
+            "versusSourceFirst": 0.613111,
+            "versusSourceEnd": 0.959177
+          }
+        ],
+        "reference": "ORDER_008F_FINAL is not in this workspace"
+      }
+    },
+    {
+      "name": "ORDER_008F_FINAL comparison",
+      "result": "BLOCKED",
+      "detail": {
+        "available": false,
+        "reason": "ORDER_008F_FINAL is not in this workspace or the fixture directory"
+      }
+    },
+    {
       "name": "manifest keeps 0-based scenes, timeline, hashes and flagged character",
       "result": "PASS",
       "detail": {
@@ -616,6 +692,158 @@
           }
         ],
         "rightsFlagged": true
+      }
+    },
+    {
+      "name": "Python zipfile reads the exported bundle",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "entries": [
+          {
+            "name": "manifest.json",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/source.mp4",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/media-043b249f-7835-4e27-9d5c-cc74e437c026.mp4",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-0-8b373681be36833b-start.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-0-8b373681be36833b-end.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/media-08acdcbb-f114-418b-8f9e-6a7b85a99460.mp4",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-1-9e1e520126cd5620-start.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-1-9e1e520126cd5620-end.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/media-6de965ef-c70d-4023-aa2c-bb8ecd34e07c.mp4",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-2-ab3f7768db4a51e3-start.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/ref-2-ab3f7768db4a51e3-end.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/character/14944977-bf47-4c73-96bc-bd514f4e7731/ref-0.jpg",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          },
+          {
+            "name": "media/export.mp4",
+            "date": [
+              2026,
+              11,
+              20,
+              16,
+              43,
+              6
+            ]
+          }
+        ]
       }
     },
     {
@@ -715,7 +943,7 @@
             "match": true
           },
           {
-            "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+            "path": "media/media-043b249f-7835-4e27-9d5c-cc74e437c026.mp4",
             "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
             "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
             "match": true
@@ -733,7 +961,7 @@
             "match": true
           },
           {
-            "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+            "path": "media/media-08acdcbb-f114-418b-8f9e-6a7b85a99460.mp4",
             "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
             "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
             "match": true
@@ -751,7 +979,7 @@
             "match": true
           },
           {
-            "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+            "path": "media/media-6de965ef-c70d-4023-aa2c-bb8ecd34e07c.mp4",
             "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
             "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
             "match": true
@@ -769,7 +997,7 @@
             "match": true
           },
           {
-            "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+            "path": "media/character/14944977-bf47-4c73-96bc-bd514f4e7731/ref-0.jpg",
             "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
             "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
             "match": true
@@ -938,7 +1166,7 @@
             "match": true
           },
           {
-            "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+            "path": "media/media-043b249f-7835-4e27-9d5c-cc74e437c026.mp4",
             "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
             "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
             "match": true
@@ -956,7 +1184,7 @@
             "match": true
           },
           {
-            "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+            "path": "media/media-08acdcbb-f114-418b-8f9e-6a7b85a99460.mp4",
             "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
             "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
             "match": true
@@ -974,7 +1202,7 @@
             "match": true
           },
           {
-            "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+            "path": "media/media-6de965ef-c70d-4023-aa2c-bb8ecd34e07c.mp4",
             "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
             "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
             "match": true
@@ -992,7 +1220,7 @@
             "match": true
           },
           {
-            "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+            "path": "media/character/14944977-bf47-4c73-96bc-bd514f4e7731/ref-0.jpg",
             "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
             "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
             "match": true
@@ -1072,5 +1300,5 @@
       }
     }
   ],
-  "finishedAt": "2026-11-20T16:17:08.014Z"
+  "finishedAt": "2026-11-20T16:43:30.843Z"
 }

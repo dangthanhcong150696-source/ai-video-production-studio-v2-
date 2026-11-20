@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "start": "node server/index.mjs",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "test:v3.2": "node --test --test-concurrency=1 tests/v3-2-storage.test.mjs tests/v3-2-qc.test.mjs",
+    "test:v3.2": "node --test --test-concurrency=1 tests/v3-2-storage.test.mjs tests/v3-2-endframe.test.mjs tests/v3-2-qc.test.mjs",
     "test:browser": "playwright test",
     "test:storyboard": "node --test tests/storyboard.test.mjs",
     "test:storyboard:browser": "playwright test tests/browser/storyboard.spec.ts"

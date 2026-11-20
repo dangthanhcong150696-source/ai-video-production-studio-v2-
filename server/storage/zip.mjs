@@ -29,7 +29,22 @@ function safeZipName(name) {
   return norm;
 }
 
-export async function writeZip(outPath, entries) {
+export function dosDateTime(date = new Date()) {
+  const safe =
+    date.getFullYear() < 1980 ? new Date(1980, 0, 1, 0, 0, 0) : date;
+  const year = safe.getFullYear();
+  const month = safe.getMonth() + 1;
+  const day = safe.getDate();
+  const dosDate = ((year - 1980) << 9) | (month << 5) | day;
+  const dosTime =
+    (safe.getHours() << 11) |
+    (safe.getMinutes() << 5) |
+    Math.floor(safe.getSeconds() / 2);
+  return { dosDate, dosTime, year, month, day };
+}
+
+export async function writeZip(outPath, entries, when = new Date()) {
+  const { dosDate, dosTime } = dosDateTime(when);
   const parts = [];
   const central = [];
   let offset = 0;
@@ -43,6 +58,8 @@ export async function writeZip(outPath, entries) {
     local.writeUInt16LE(20, 4);
     local.writeUInt16LE(0x0800, 6);
     local.writeUInt16LE(0, 8);
+    local.writeUInt16LE(dosTime, 10);
+    local.writeUInt16LE(dosDate, 12);
     local.writeUInt32LE(crc, 14);
     local.writeUInt32LE(data.length, 18);
     local.writeUInt32LE(data.length, 22);
@@ -53,6 +70,8 @@ export async function writeZip(outPath, entries) {
     cd.writeUInt16LE(20, 4);
     cd.writeUInt16LE(20, 6);
     cd.writeUInt16LE(0x0800, 8);
+    cd.writeUInt16LE(dosTime, 12);
+    cd.writeUInt16LE(dosDate, 14);
     cd.writeUInt32LE(crc, 16);
     cd.writeUInt32LE(data.length, 20);
     cd.writeUInt32LE(data.length, 24);

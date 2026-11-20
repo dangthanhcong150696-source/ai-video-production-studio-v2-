@@ -1,12 +1,14 @@
 // Workstream 4 — real-clip save, wipe, restore, and re-export QC.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { createHash } from "node:crypto";
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { run } from "../server/media.mjs";
+const exec = promisify(execFile);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const CLIPS = [
   ["Woman_smiling_in_car_interior_59b4e7c1", "Scene 0"],
@@ -28,6 +30,8 @@ test(
       localRestore: null,
       bundleRestore: null,
       exports: {},
+      endFrames: null,
+      referenceExport: null,
       checks: [],
     };
     const work = await mkdtemp(join(tmpdir(), "studio-v32-qc-"));
@@ -188,6 +192,18 @@ test(
       const originalExport = join(work, "original-export.mp4");
       await download(`${base}/projects/${project.id}/download`, originalExport);
       report.exports.original = await inspect(originalExport);
+      report.endFrames = await endFrames(originalExport, clips, work);
+      check(
+        "8.04s clips in 8.00s scenes do not snap the last frame back to the first",
+        report.endFrames.ok ? "PASS" : "FAIL",
+        report.endFrames,
+      );
+      report.referenceExport = await findReference();
+      check(
+        "ORDER_008F_FINAL comparison",
+        report.referenceExport.available ? "PASS" : "BLOCKED",
+        report.referenceExport,
+      );
       const saved = await postJson(`${base}/projects/${project.id}/save`, {
         backend: "local",
       });
@@ -220,6 +236,8 @@ test(
       );
       const bundlePath = join(work, "bundle.zip");
       await download(`${base}/projects/${project.id}/bundle`, bundlePath);
+      const zipRead = await pythonZip(bundlePath);
+      check("Python zipfile reads the exported bundle", zipRead.ok ? "PASS" : "FAIL", zipRead);
       const fingerprint = await diskFingerprint(data, project.id, manifest);
       await wipe(data);
       const empty = await (await fetch(base + "/projects")).json();
@@ -337,6 +355,8 @@ ${probeRow("after bundle restore", bundle?.after)}
 ${sampleTable(local) ? `### SSIM / PSNR after local restore\n${sampleTable(local)}` : ""}
 ${sampleTable(bundle) ? `### SSIM / PSNR after bundle restore\n${sampleTable(bundle)}` : ""}
 
+${endFrameTable(report.endFrames)}
+
 ${report.checks.map(line).join("\n\n")}
 
 ## Fixtures
@@ -368,6 +388,136 @@ ${exportBlock("Re-export after local restore", report.exports.afterLocalRestore)
 ${exportBlock("Re-export after bundle restore", report.exports.afterBundleRestore)}
 ${report.fatal ? `## Fatal\n\n\`\`\`\n${report.fatal}\n\`\`\`\n` : ""}
 `;
+}
+
+function endFrameTable(endFrames) {
+  if (!endFrames?.scenes) return "";
+  return [
+    "## Scene-end frames",
+    "",
+    "Each scene is 8.00s at 30fps. The last frame is index 239 inside the scene (about 7.967s). A looped clip would make that frame match the clip's first frame.",
+    "",
+    "| scene | output frame | SSIM vs scene start | SSIM vs clip start | SSIM vs clip end (~7.9s) |",
+    "| --- | --- | --- | --- | --- |",
+    ...endFrames.scenes.map(
+      (scene) =>
+        `| ${scene.index} | ${scene.frame} | ${scene.versusFirst} | ${scene.versusSourceFirst} | ${scene.versusSourceEnd} |`,
+    ),
+    "",
+    `ORDER_008F_FINAL: ${endFrames.reference || "not used"}.`,
+    "",
+  ].join("\n");
+}
+
+async function grabFrame(file, dest, { time, frame } = {}) {
+  const select = Number.isInteger(frame)
+    ? ["-vf", `select=eq(n\\,${frame})`, "-frames:v", "1"]
+    : ["-ss", String(time), "-frames:v", "1"];
+  await run("ffmpeg", ["-y", "-v", "error", "-i", file, ...select, dest]);
+}
+
+async function ssimAt(left, right, scaleSecond) {
+  const filter = scaleSecond
+    ? "[1:v]scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,format=yuv420p[b];[0:v]format=yuv420p[a];[a][b]ssim"
+    : "ssim";
+  const result = await run("ffmpeg", [
+    "-i",
+    left,
+    "-i",
+    right,
+    "-lavfi",
+    filter,
+    "-f",
+    "null",
+    "-",
+  ]);
+  const value = Number((result.err.match(/All:([0-9.]+)/) || [])[1]);
+  if (!Number.isFinite(value)) throw new Error(result.err.slice(-500));
+  return value;
+}
+
+async function endFrames(exportFile, clips, work) {
+  const scenes = [];
+  for (let index = 0; index < clips.length; index++) {
+    const dir = join(work, `endframe-${index}`);
+    await mkdir(dir, { recursive: true });
+    const frame = index * 240 + 239;
+    const last = join(dir, "last.png");
+    const first = join(dir, "first.png");
+    const srcFirst = join(dir, "src-first.png");
+    const srcLast = join(dir, "src-last.png");
+    await grabFrame(exportFile, last, { frame });
+    await grabFrame(exportFile, first, { frame: index * 240 });
+    await grabFrame(clips[index], srcFirst, { time: 0.1 });
+    await grabFrame(clips[index], srcLast, { time: 7.9 });
+    const versusFirst = await ssimAt(last, first, false);
+    const versusSourceFirst = await ssimAt(last, srcFirst, true);
+    const versusSourceEnd = await ssimAt(last, srcLast, true);
+    scenes.push({
+      index,
+      frame,
+      time: Number((index * 8 + 239 / 30).toFixed(3)),
+      versusFirst,
+      versusSourceFirst,
+      versusSourceEnd,
+    });
+  }
+  return {
+    ok: scenes.every(
+      (scene) =>
+        scene.versusFirst < 0.85 &&
+        scene.versusSourceEnd > scene.versusSourceFirst + 0.05,
+    ),
+    scenes,
+    reference: "ORDER_008F_FINAL is not in this workspace",
+  };
+}
+
+async function findReference() {
+  const roots = [
+    process.env.V32_FIXTURE_DIR,
+    "/home/ubuntu/.cursor/projects/workspace/uploads",
+    join(process.cwd(), "uploads"),
+    join(process.cwd(), "evidence"),
+  ].filter(Boolean);
+  for (const root of roots) {
+    let names = [];
+    try {
+      names = await readdir(root);
+    } catch {
+      continue;
+    }
+    const match = names.find((name) => name.includes("ORDER_008F_FINAL"));
+    if (match) return { available: true, file: join(root, match) };
+  }
+  return {
+    available: false,
+    reason: "ORDER_008F_FINAL is not in this workspace or the fixture directory",
+  };
+}
+
+async function pythonZip(zipPath) {
+  const script = `
+import json, sys, zipfile
+with zipfile.ZipFile(sys.argv[1]) as bundle:
+    bad = bundle.testzip()
+    if bad:
+        raise SystemExit("corrupt " + bad)
+    rows = []
+    for info in bundle.infolist():
+        year, month, day = info.date_time[:3]
+        if year < 1980 or not 1 <= month <= 12 or not 1 <= day <= 31:
+            raise SystemExit("invalid DOS date " + str(info.date_time) + " " + info.filename)
+        bundle.read(info.filename)
+        rows.append({"name": info.filename, "date": list(info.date_time)})
+print(json.dumps(rows))
+`;
+  try {
+    const { stdout } = await exec("python3", ["-c", script, zipPath]);
+    return { ok: true, entries: JSON.parse(stdout) };
+  } catch (error) {
+    return { ok: false, error: String(error.stderr || error.message) };
+  }
 }
 
 async function findClip(prefix) {

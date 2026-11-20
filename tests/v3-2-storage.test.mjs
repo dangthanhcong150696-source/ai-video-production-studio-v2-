@@ -14,14 +14,14 @@ import {
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { createVerify } from "node:crypto";
-import { run } from "../server/media.mjs";
+import { run, sceneVideoFilter, videoReplacementArgs } from "../server/media.mjs";
 import {
   DRIVE_SCOPE,
   createDriveBackend,
   driveConfig,
   signServiceAccountJwt,
 } from "../server/storage/drive.mjs";
-import { extractBundle, readZip, writeZip } from "../server/storage/zip.mjs";
+import { dosDateTime, extractBundle, readZip, writeZip } from "../server/storage/zip.mjs";
 const exec = promisify(execFile);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -174,16 +174,43 @@ test("Drive client signs a service-account token and uploads only after Google a
   );
 });
 
+test("replacement clips that cover the scene are trimmed instead of looped", () => {
+  const file = "/tmp/clip.mp4";
+  assert.deepEqual(videoReplacementArgs(file, 8.04, 8), ["-i", file]);
+  assert.deepEqual(videoReplacementArgs(file, 8, 8), ["-i", file]);
+  assert.deepEqual(videoReplacementArgs(file, 1, 6), ["-stream_loop", "-1", "-i", file]);
+  assert.throws(() => videoReplacementArgs(file, Number.NaN, 8), /thời lượng/);
+  const held = sceneVideoFilter(720, 1280, { holdLastFrame: true, duration: 8 });
+  assert.match(held, /^trim=duration=8,setpts=PTS-STARTPTS,/);
+  assert.match(held, /fps=30,tpad=stop_mode=clone:stop_duration=0\.034/);
+  assert.doesNotMatch(held, /stream_loop/);
+  const looped = sceneVideoFilter(320, 180);
+  assert.equal(looped.includes("trim="), false);
+  assert.match(looped, /fps=30/);
+});
+
 test("bundles round-trip through STORE and DEFLATE zip", async () => {
   const work = await mkdtemp(join(tmpdir(), "studio-zip-"));
   const media = Buffer.from("frame-bytes");
   const manifest = { manifestVersion: 1, note: "bundle" };
   const zipPath = join(work, "store.zip");
+  const stamp = new Date(2026, 10, 20, 16, 4, 0);
   await writeZip(zipPath, [
     { name: "manifest.json", data: Buffer.from(JSON.stringify(manifest)) },
     { name: "media/clip.bin", data: media },
-  ]);
+  ], stamp);
+  const encoded = dosDateTime(stamp);
+  assert.equal(encoded.year, 2026);
+  assert.equal(encoded.month, 11);
+  assert.equal(encoded.day, 20);
+  assert.ok(encoded.dosDate > 0);
+  const clamped = dosDateTime(new Date(1979, 0, 1));
+  assert.equal(clamped.year, 1980);
+  assert.equal(clamped.month, 1);
+  assert.equal(clamped.day, 1);
   await exec("unzip", ["-t", zipPath]);
+  await exec("unzip", ["-l", zipPath]);
+  await assertPythonZip(zipPath, { date: [2026, 11, 20] });
   const extracted = join(work, "out");
   const read = await extractBundle(zipPath, extracted);
   assert.deepEqual(read, manifest);
@@ -443,6 +470,8 @@ test(
       assert.equal(bundleResponse.status, 200);
       await writeFile(bundlePath, Buffer.from(await bundleResponse.arrayBuffer()));
       await exec("unzip", ["-t", bundlePath]);
+      await exec("unzip", ["-l", bundlePath]);
+      await assertPythonZip(bundlePath);
       const deflateDir = join(work, "deflate-src");
       await exec("unzip", ["-q", bundlePath, "-d", deflateDir]);
       const deflateZip = join(work, "deflate.zip");
@@ -482,6 +511,36 @@ test(
     }
   },
 );
+
+async function assertPythonZip(zipPath, { date = null } = {}) {
+  const script = `
+import sys, zipfile
+path = sys.argv[1]
+expect = sys.argv[2]
+with zipfile.ZipFile(path) as bundle:
+    bad = bundle.testzip()
+    if bad:
+        raise SystemExit("corrupt " + bad)
+    infos = bundle.infolist()
+    if not infos:
+        raise SystemExit("empty zip")
+    for info in infos:
+        year, month, day = info.date_time[:3]
+        if year < 1980 or not 1 <= month <= 12 or not 1 <= day <= 31:
+            raise SystemExit("invalid DOS date " + str(info.date_time))
+        if expect and [year, month, day] != [int(x) for x in expect.split(",")]:
+            raise SystemExit("unexpected date " + str(info.date_time))
+        bundle.read(info.filename)
+print(len(infos))
+`;
+  const { stdout } = await exec("python3", [
+    "-c",
+    script,
+    zipPath,
+    date ? date.join(",") : "",
+  ]);
+  assert.match(stdout, /^[1-9]/);
+}
 
 async function postFile(url, file, field = "video") {
   const body = new FormData();
