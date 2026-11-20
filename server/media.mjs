@@ -57,6 +57,7 @@ export async function probe(file) {
       video.avg_frame_rate
         ?.split("/")
         .reduce((a, b) => Number(a) / Number(b)) || 0,
+    frames: Number(video.nb_frames) > 0 ? Number(video.nb_frames) : null,
   };
 }
 export async function validateMedia(file, { source = false } = {}) {

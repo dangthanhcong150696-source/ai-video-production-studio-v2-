@@ -1,0 +1,1076 @@
+{
+  "startedAt": "2026-11-20T16:16:24.209Z",
+  "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+  "fixtures": [
+    {
+      "label": "Scene 0",
+      "prefix": "Woman_smiling_in_car_interior_59b4e7c1",
+      "file": "Woman_smiling_in_car_interior_59b4e7c1_14e2.mp4",
+      "sha256": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+      "size": 3994513,
+      "duration": 8,
+      "width": 720,
+      "height": 1280,
+      "fps": 24,
+      "frames": 192,
+      "audio": true,
+      "videoCodec": "h264",
+      "audioCodec": "aac"
+    },
+    {
+      "label": "Scene 1",
+      "prefix": "Woman_turning_head_portrait_video_a1321114",
+      "file": "Woman_turning_head_portrait_video_a1321114_be2d.mp4",
+      "sha256": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+      "size": 3297549,
+      "duration": 8,
+      "width": 720,
+      "height": 1280,
+      "fps": 24,
+      "frames": 192,
+      "audio": true,
+      "videoCodec": "h264",
+      "audioCodec": "aac"
+    },
+    {
+      "label": "Scene 2",
+      "prefix": "Woman_turning_and_smiling_5f8e1264",
+      "file": "Woman_turning_and_smiling_5f8e1264_a4f1.mp4",
+      "sha256": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+      "size": 3340330,
+      "duration": 8,
+      "width": 720,
+      "height": 1280,
+      "fps": 24,
+      "frames": 192,
+      "audio": true,
+      "videoCodec": "h264",
+      "audioCodec": "aac"
+    }
+  ],
+  "source": {
+    "sha256": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+    "size": 6279473,
+    "duration": 24,
+    "width": 720,
+    "height": 1280,
+    "fps": 24,
+    "frames": 576,
+    "audio": true,
+    "videoCodec": "h264",
+    "audioCodec": "aac"
+  },
+  "scenes": [
+    {
+      "id": 0,
+      "start": 0,
+      "duration": 8
+    },
+    {
+      "id": 1,
+      "start": 8,
+      "duration": 8
+    },
+    {
+      "id": 2,
+      "start": 16,
+      "duration": 8
+    }
+  ],
+  "drive": {
+    "configured": false,
+    "status": 424,
+    "error": "unconfigured: set GOOGLE_DRIVE_FOLDER_ID and either a service-account JSON or an OAuth refresh token",
+    "scope": "https://www.googleapis.com/auth/drive"
+  },
+  "localRestore": {
+    "ok": true,
+    "sceneMedia": [
+      {
+        "id": 0,
+        "start": 0,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "size": 3994513,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "size": 30331,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "size": 30055,
+            "mime": "image/jpeg"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "start": 8,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "size": 3297549,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "size": 34820,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "size": 33370,
+            "mime": "image/jpeg"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "start": 16,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "size": 3340330,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "size": 33761,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "size": 27268,
+            "mime": "image/jpeg"
+          }
+        ]
+      }
+    ],
+    "hashes": [
+      {
+        "path": "media/source.mp4",
+        "expected": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+        "actual": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+        "match": true
+      },
+      {
+        "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+        "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+        "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+        "match": true
+      },
+      {
+        "path": "media/ref-0-8b373681be36833b-start.jpg",
+        "expected": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+        "actual": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+        "match": true
+      },
+      {
+        "path": "media/ref-0-8b373681be36833b-end.jpg",
+        "expected": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+        "actual": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+        "match": true
+      },
+      {
+        "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+        "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+        "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+        "match": true
+      },
+      {
+        "path": "media/ref-1-9e1e520126cd5620-start.jpg",
+        "expected": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+        "actual": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+        "match": true
+      },
+      {
+        "path": "media/ref-1-9e1e520126cd5620-end.jpg",
+        "expected": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+        "actual": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+        "match": true
+      },
+      {
+        "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+        "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+        "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+        "match": true
+      },
+      {
+        "path": "media/ref-2-ab3f7768db4a51e3-start.jpg",
+        "expected": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+        "actual": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+        "match": true
+      },
+      {
+        "path": "media/ref-2-ab3f7768db4a51e3-end.jpg",
+        "expected": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+        "actual": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+        "match": true
+      },
+      {
+        "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+        "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+        "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+        "match": true
+      },
+      {
+        "path": "media/export.mp4",
+        "expected": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "actual": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "match": true
+      }
+    ],
+    "rightsFlagged": true
+  },
+  "bundleRestore": {
+    "ok": true,
+    "sceneMedia": [
+      {
+        "id": 0,
+        "start": 0,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "size": 3994513,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "size": 30331,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "size": 30055,
+            "mime": "image/jpeg"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "start": 8,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "size": 3297549,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "size": 34820,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "size": 33370,
+            "mime": "image/jpeg"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "start": 16,
+        "duration": 8,
+        "media": [
+          {
+            "role": "replacement",
+            "sha256": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "size": 3340330,
+            "mime": "video/mp4"
+          },
+          {
+            "role": "reference-start",
+            "sha256": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "size": 33761,
+            "mime": "image/jpeg"
+          },
+          {
+            "role": "reference-end",
+            "sha256": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "size": 27268,
+            "mime": "image/jpeg"
+          }
+        ]
+      }
+    ],
+    "hashes": [
+      {
+        "path": "media/source.mp4",
+        "expected": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+        "actual": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+        "match": true
+      },
+      {
+        "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+        "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+        "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+        "match": true
+      },
+      {
+        "path": "media/ref-0-8b373681be36833b-start.jpg",
+        "expected": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+        "actual": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+        "match": true
+      },
+      {
+        "path": "media/ref-0-8b373681be36833b-end.jpg",
+        "expected": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+        "actual": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+        "match": true
+      },
+      {
+        "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+        "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+        "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+        "match": true
+      },
+      {
+        "path": "media/ref-1-9e1e520126cd5620-start.jpg",
+        "expected": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+        "actual": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+        "match": true
+      },
+      {
+        "path": "media/ref-1-9e1e520126cd5620-end.jpg",
+        "expected": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+        "actual": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+        "match": true
+      },
+      {
+        "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+        "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+        "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+        "match": true
+      },
+      {
+        "path": "media/ref-2-ab3f7768db4a51e3-start.jpg",
+        "expected": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+        "actual": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+        "match": true
+      },
+      {
+        "path": "media/ref-2-ab3f7768db4a51e3-end.jpg",
+        "expected": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+        "actual": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+        "match": true
+      },
+      {
+        "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+        "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+        "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+        "match": true
+      },
+      {
+        "path": "media/export.mp4",
+        "expected": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "actual": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "match": true
+      }
+    ],
+    "rightsFlagged": true
+  },
+  "exports": {
+    "original": {
+      "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+      "size": 12198218,
+      "duration": 24,
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "frames": 720,
+      "audio": true,
+      "videoCodec": "h264",
+      "audioCodec": "aac"
+    },
+    "afterLocalRestore": {
+      "ok": true,
+      "before": {
+        "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "size": 12198218,
+        "duration": 24,
+        "width": 720,
+        "height": 1280,
+        "fps": 30,
+        "frames": 720,
+        "audio": true,
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "after": {
+        "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "size": 12198218,
+        "duration": 24,
+        "width": 720,
+        "height": 1280,
+        "fps": 30,
+        "frames": 720,
+        "audio": true,
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "samples": [
+        {
+          "time": 1,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 4,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 9,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 12,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 17,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 21,
+          "ssim": 1,
+          "psnr": "inf"
+        }
+      ],
+      "sha256Match": true
+    },
+    "afterBundleRestore": {
+      "ok": true,
+      "before": {
+        "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "size": 12198218,
+        "duration": 24,
+        "width": 720,
+        "height": 1280,
+        "fps": 30,
+        "frames": 720,
+        "audio": true,
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "after": {
+        "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+        "size": 12198218,
+        "duration": 24,
+        "width": 720,
+        "height": 1280,
+        "fps": 30,
+        "frames": 720,
+        "audio": true,
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      },
+      "samples": [
+        {
+          "time": 1,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 4,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 9,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 12,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 17,
+          "ssim": 1,
+          "psnr": "inf"
+        },
+        {
+          "time": 21,
+          "ssim": 1,
+          "psnr": "inf"
+        }
+      ],
+      "sha256Match": true
+    }
+  },
+  "checks": [
+    {
+      "name": "source is 720x1280 with audio near 24s",
+      "result": "PASS",
+      "detail": {
+        "sha256": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+        "size": 6279473,
+        "duration": 24,
+        "width": 720,
+        "height": 1280,
+        "fps": 24,
+        "frames": 576,
+        "audio": true,
+        "videoCodec": "h264",
+        "audioCodec": "aac"
+      }
+    },
+    {
+      "name": "detected timeline is 3 scenes with ids 0,1,2",
+      "result": "PASS",
+      "detail": {
+        "scenes": [
+          {
+            "id": 0,
+            "start": 0,
+            "duration": 8
+          },
+          {
+            "id": 1,
+            "start": 8,
+            "duration": 8
+          },
+          {
+            "id": 2,
+            "start": 16,
+            "duration": 8
+          }
+        ],
+        "timelineSeconds": 24
+      }
+    },
+    {
+      "name": "unknown rights are flagged",
+      "result": "PASS",
+      "detail": {
+        "rightsStatus": "unknown",
+        "rightsFlagged": true
+      }
+    },
+    {
+      "name": "Google Drive without credentials",
+      "result": "BLOCKED",
+      "detail": {
+        "configured": false,
+        "status": 424,
+        "error": "unconfigured: set GOOGLE_DRIVE_FOLDER_ID and either a service-account JSON or an OAuth refresh token",
+        "scope": "https://www.googleapis.com/auth/drive"
+      }
+    },
+    {
+      "name": "manifest keeps 0-based scenes, timeline, hashes and flagged character",
+      "result": "PASS",
+      "detail": {
+        "ids": [
+          0,
+          1,
+          2
+        ],
+        "timeline": [
+          {
+            "index": 0,
+            "sceneId": 0,
+            "start": 0,
+            "duration": 8
+          },
+          {
+            "index": 1,
+            "sceneId": 1,
+            "start": 8,
+            "duration": 8
+          },
+          {
+            "index": 2,
+            "sceneId": 2,
+            "start": 16,
+            "duration": 8
+          }
+        ],
+        "rightsFlagged": true
+      }
+    },
+    {
+      "name": "wiped live disk lists no projects",
+      "result": "PASS",
+      "detail": {
+        "projects": []
+      }
+    },
+    {
+      "name": "restore from local storage",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "sceneMedia": [
+          {
+            "id": 0,
+            "start": 0,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+                "size": 3994513,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+                "size": 30331,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+                "size": 30055,
+                "mime": "image/jpeg"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "start": 8,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+                "size": 3297549,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+                "size": 34820,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+                "size": 33370,
+                "mime": "image/jpeg"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "start": 16,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+                "size": 3340330,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+                "size": 33761,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+                "size": 27268,
+                "mime": "image/jpeg"
+              }
+            ]
+          }
+        ],
+        "hashes": [
+          {
+            "path": "media/source.mp4",
+            "expected": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+            "actual": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+            "match": true
+          },
+          {
+            "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+            "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "match": true
+          },
+          {
+            "path": "media/ref-0-8b373681be36833b-start.jpg",
+            "expected": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "actual": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "match": true
+          },
+          {
+            "path": "media/ref-0-8b373681be36833b-end.jpg",
+            "expected": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "actual": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "match": true
+          },
+          {
+            "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+            "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "match": true
+          },
+          {
+            "path": "media/ref-1-9e1e520126cd5620-start.jpg",
+            "expected": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "actual": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "match": true
+          },
+          {
+            "path": "media/ref-1-9e1e520126cd5620-end.jpg",
+            "expected": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "actual": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "match": true
+          },
+          {
+            "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+            "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "match": true
+          },
+          {
+            "path": "media/ref-2-ab3f7768db4a51e3-start.jpg",
+            "expected": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "actual": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "match": true
+          },
+          {
+            "path": "media/ref-2-ab3f7768db4a51e3-end.jpg",
+            "expected": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "actual": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "match": true
+          },
+          {
+            "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+            "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+            "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+            "match": true
+          },
+          {
+            "path": "media/export.mp4",
+            "expected": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+            "actual": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+            "match": true
+          }
+        ],
+        "rightsFlagged": true
+      }
+    },
+    {
+      "name": "re-export after local restore",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "before": {
+          "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+          "size": 12198218,
+          "duration": 24,
+          "width": 720,
+          "height": 1280,
+          "fps": 30,
+          "frames": 720,
+          "audio": true,
+          "videoCodec": "h264",
+          "audioCodec": "aac"
+        },
+        "after": {
+          "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+          "size": 12198218,
+          "duration": 24,
+          "width": 720,
+          "height": 1280,
+          "fps": 30,
+          "frames": 720,
+          "audio": true,
+          "videoCodec": "h264",
+          "audioCodec": "aac"
+        },
+        "samples": [
+          {
+            "time": 1,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 4,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 9,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 12,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 17,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 21,
+            "ssim": 1,
+            "psnr": "inf"
+          }
+        ],
+        "sha256Match": true
+      }
+    },
+    {
+      "name": "restore from bundle",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "sceneMedia": [
+          {
+            "id": 0,
+            "start": 0,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+                "size": 3994513,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+                "size": 30331,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+                "size": 30055,
+                "mime": "image/jpeg"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "start": 8,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+                "size": 3297549,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+                "size": 34820,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+                "size": 33370,
+                "mime": "image/jpeg"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "start": 16,
+            "duration": 8,
+            "media": [
+              {
+                "role": "replacement",
+                "sha256": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+                "size": 3340330,
+                "mime": "video/mp4"
+              },
+              {
+                "role": "reference-start",
+                "sha256": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+                "size": 33761,
+                "mime": "image/jpeg"
+              },
+              {
+                "role": "reference-end",
+                "sha256": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+                "size": 27268,
+                "mime": "image/jpeg"
+              }
+            ]
+          }
+        ],
+        "hashes": [
+          {
+            "path": "media/source.mp4",
+            "expected": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+            "actual": "7947912173486da54102197b60dae4206c282ffe1f6a4066796b158c1c11fa31",
+            "match": true
+          },
+          {
+            "path": "media/media-ce827f68-ba9a-4b79-931c-cc29992b0da1.mp4",
+            "expected": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "actual": "558092fbde1f6f33afdeeb7ceb488b07f0637ffb9d880ac33e9a9e121569a82e",
+            "match": true
+          },
+          {
+            "path": "media/ref-0-8b373681be36833b-start.jpg",
+            "expected": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "actual": "53f8e3dfcff2b16b253274731f195e007702381479c26bce4517a942161eaeaa",
+            "match": true
+          },
+          {
+            "path": "media/ref-0-8b373681be36833b-end.jpg",
+            "expected": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "actual": "c310fddd31eae0b0228afc314722c91b4a45f612d8bb1f4baf65366e4887a40e",
+            "match": true
+          },
+          {
+            "path": "media/media-65f9817a-9d2e-4cfa-b14e-a69c7a9dd481.mp4",
+            "expected": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "actual": "95330ad39693f1b68f63ba591f718367d805640daba8e0ed178bfa5511379daa",
+            "match": true
+          },
+          {
+            "path": "media/ref-1-9e1e520126cd5620-start.jpg",
+            "expected": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "actual": "9fb6f9b7d0b6ba0b25b7993188943b86e957548a1e710de00bf7e26667a09524",
+            "match": true
+          },
+          {
+            "path": "media/ref-1-9e1e520126cd5620-end.jpg",
+            "expected": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "actual": "9d21aecc0576de84a67569c64cfe41d236e465bf1f74382f91ae3d82f3f0caf1",
+            "match": true
+          },
+          {
+            "path": "media/media-534f4ae0-82eb-4996-966d-69c2d4d63791.mp4",
+            "expected": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "actual": "4c3cfc269d8a73114ad2e6a36b34feed36ca87d6787871be267f30f31ae747ed",
+            "match": true
+          },
+          {
+            "path": "media/ref-2-ab3f7768db4a51e3-start.jpg",
+            "expected": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "actual": "ccef88ec365dc9a52a2c3595f320a88ad8257260e3f678823ed7dda29e4cce1c",
+            "match": true
+          },
+          {
+            "path": "media/ref-2-ab3f7768db4a51e3-end.jpg",
+            "expected": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "actual": "8f1a32123729e7c1144b57d7622b0f379f2de64870c0a9520444b58878ae07d1",
+            "match": true
+          },
+          {
+            "path": "media/character/6972f559-2d13-4627-9e6a-7a0d729fb3d9/ref-0.jpg",
+            "expected": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+            "actual": "5c51e7211446a0e60e81942a633adf9133a7c6a5f0887c33d7cc1831159db89c",
+            "match": true
+          },
+          {
+            "path": "media/export.mp4",
+            "expected": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+            "actual": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+            "match": true
+          }
+        ],
+        "rightsFlagged": true
+      }
+    },
+    {
+      "name": "re-export after bundle restore",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "before": {
+          "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+          "size": 12198218,
+          "duration": 24,
+          "width": 720,
+          "height": 1280,
+          "fps": 30,
+          "frames": 720,
+          "audio": true,
+          "videoCodec": "h264",
+          "audioCodec": "aac"
+        },
+        "after": {
+          "sha256": "445a68bf1cc97982f4f75d29ce9834751ffc6b1309d3525c4ae03e2786e015be",
+          "size": 12198218,
+          "duration": 24,
+          "width": 720,
+          "height": 1280,
+          "fps": 30,
+          "frames": 720,
+          "audio": true,
+          "videoCodec": "h264",
+          "audioCodec": "aac"
+        },
+        "samples": [
+          {
+            "time": 1,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 4,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 9,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 12,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 17,
+            "ssim": 1,
+            "psnr": "inf"
+          },
+          {
+            "time": 21,
+            "ssim": 1,
+            "psnr": "inf"
+          }
+        ],
+        "sha256Match": true
+      }
+    }
+  ],
+  "finishedAt": "2026-11-20T16:17:08.014Z"
+}

@@ -7,7 +7,7 @@ test("Storyboard V3.1 edits prompts and binds manual media to stable scenes", as
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Studio V3.1" }),
+    page.getByRole("heading", { name: "Studio V3.2" }),
   ).toBeVisible();
   await page
     .locator("input[type=file]")

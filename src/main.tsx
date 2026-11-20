@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./style.css";
 import Timeline from "./Timeline";
 import Storyboard from "./Storyboard";
+import Library from "./Library";
+import CharacterLock, { type CharacterRecord } from "./CharacterLock";
 type Scene = {
   id: number;
   start: number;
@@ -19,6 +21,24 @@ type Project = {
   height: number;
   audio: boolean;
   scenes: Scene[];
+  persisted?: boolean;
+  characterLock?: CharacterRecord | null;
+};
+type LiveProject = {
+  id: string;
+  name: string;
+  sceneCount: number;
+  persisted?: boolean;
+  rightsFlagged?: boolean;
+};
+type SavedProject = {
+  id: string;
+  name?: string;
+  savedAt?: string | null;
+  sceneCount?: number;
+  error?: string;
+  rightsFlagged?: boolean;
+  backend?: string;
 };
 type Job = { status: string; progress: number; error?: string };
 async function api(path: string, options?: RequestInit) {
@@ -35,17 +55,53 @@ function App() {
   const [selected, setSelected] = useState(0);
   const video = useRef<HTMLVideoElement>(null);
   const [protectedUpload, setProtectedUpload] = useState(false);
+  const [live, setLive] = useState<LiveProject[]>([]);
+  const [saved, setSaved] = useState<SavedProject[]>([]);
+  const [storage, setStorage] = useState<{
+    active: string;
+    local?: { configured: boolean };
+    drive?: { configured: boolean; reason?: string; auth?: string; scope?: string };
+  } | null>(null);
+  function remember(id: string) {
+    localStorage.setItem("studio-v3-2-project", id);
+    localStorage.setItem("studio-v3-1-project", id);
+  }
+  async function refreshLibrary(nextId?: string) {
+    const listed = await api("/projects");
+    setLive(listed.projects);
+    try {
+      setSaved((await api("/saved")).projects);
+    } catch (error) {
+      setError((error as Error).message);
+    }
+    if (nextId) {
+      setProject(await api(`/projects/${nextId}`));
+      remember(nextId);
+    }
+  }
   useEffect(() => {
-    void api("/config")
-      .then((c) => setProtectedUpload(c.authentication))
-      .catch(() => {});
-  }, []);
-  useEffect(() => {
-    const id = localStorage.getItem("studio-v3-1-project");
-    if (id)
-      api(`/projects/${id}`)
-        .then(setProject)
-        .catch(() => localStorage.removeItem("studio-v3-1-project"));
+    void (async () => {
+      try {
+        const config = await api("/config");
+        setProtectedUpload(config.authentication);
+        setStorage(config.storage);
+        const listed = await api("/projects");
+        setLive(listed.projects);
+        const remembered =
+          localStorage.getItem("studio-v3-2-project") ||
+          localStorage.getItem("studio-v3-1-project");
+        const id = listed.projects.some((item: LiveProject) => item.id === remembered)
+          ? remembered
+          : listed.projects[0]?.id;
+        if (id) {
+          setProject(await api(`/projects/${id}`));
+          remember(id);
+        }
+        setSaved((await api("/saved")).projects);
+      } catch {
+        /* The studio still renders when a fresh disk has no projects. */
+      }
+    })();
   }, []);
   useEffect(() => {
     if (!project) return;
@@ -85,7 +141,8 @@ function App() {
         { method: "POST", body },
       );
       setProject(p);
-      localStorage.setItem("studio-v3-1-project", p.id);
+      remember(p.id);
+      setLive(await api("/projects").then((data) => data.projects));
       setJob({ status: "idle", progress: 0 });
       if (scene === undefined) setSelected(0);
     } catch (e) {
@@ -129,7 +186,7 @@ function App() {
           <div>
             <span className="eyebrow">AI VIDEO PRODUCTION</span>
             <h1>
-              Studio <em>V3.1</em>
+              Studio <em>V3.2</em>
             </h1>
           </div>
           <div className="top-right">
@@ -172,6 +229,34 @@ function App() {
             ? "Đã bật mật khẩu."
             : "Chưa bật mật khẩu; chỉ dùng media thử, không nhạy cảm."}
         </div>
+        <Library
+          live={live}
+          saved={saved}
+          storage={storage}
+          projectId={project?.id}
+          locked={locked}
+          onError={setError}
+          onRefresh={async () => {
+            await refreshLibrary(project?.id);
+          }}
+          onOpen={async (id) => {
+            setProject(await api(`/projects/${id}`));
+            remember(id);
+            setJob({ status: "idle", progress: 0 });
+            await refreshLibrary();
+          }}
+        />
+        <CharacterLock
+          projectId={project?.id}
+          attached={project?.characterLock}
+          locked={locked}
+          onError={setError}
+          onChanged={async () => {
+            if (!project) return;
+            setProject(await api(`/projects/${project.id}`));
+            await refreshLibrary();
+          }}
+        />
         <section className="canvas">
           <div className="canvas-title">
             WORKFLOW CANVAS <span>01 / VIDEO PIPELINE</span>
@@ -386,6 +471,8 @@ function App() {
                 await api(`/projects/${project.id}`, { method: "DELETE" });
                 setProject(null);
                 localStorage.removeItem("studio-v3-1-project");
+                localStorage.removeItem("studio-v3-2-project");
+                setLive(await api("/projects").then((data) => data.projects));
               } catch (e) {
                 setError((e as Error).message);
               }
@@ -396,7 +483,7 @@ function App() {
         )}
         <footer>
           LOCAL PROCESSING · NO PAID API{" "}
-          <span>AI VIDEO PRODUCTION STUDIO V3.1</span>
+          <span>AI VIDEO PRODUCTION STUDIO V3.2</span>
         </footer>
       </main>
     </div>
